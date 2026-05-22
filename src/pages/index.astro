@@ -1,0 +1,535 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Chat from '../components/Chat.astro';
+import resumePdf from '../content/resume/Vikhyat-Chauhan-Resume.pdf?url';
+
+const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
+  (a, b) => +new Date(b.data.date) - +new Date(a.data.date),
+);
+const writing = posts
+  .filter((p) => p.data.pinned)
+  .slice(0, 3)
+  .map((p) => ({
+    title: p.data.title,
+    blurb: p.data.blurb,
+    href: `/blog/${p.id}`,
+    tag: p.data.tag,
+  }));
+
+const projects = [
+  {
+    title: 'Professional RAG Pipeline',
+    context: 'Personal · Production',
+    tagClass: 'text-orange-700',
+    blurb:
+      'Two-stage retrieval (BGE-base → MS-MARCO cross-encoder) with SHA-256 semantic cache and per-query token tracking. Built from scratch — no LangChain — and deployed as a containerized service.',
+    stack: ['Python', 'FastAPI', 'BGE', 'Cross-Encoder', 'Cloud Run', 'Docker'],
+    metrics: [
+      { label: 'API overhead', value: '−30%' },
+      { label: 'Eval queries', value: '50+' },
+      { label: 'Faithfulness', value: 'LLM-judge ↑' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/ProfessionalRAG',
+    repoLabel: 'View source',
+    deepDive: '/projects/professional-rag',
+  },
+  {
+    title: 'Multi-Agent LLM for Simulation Synthesis',
+    context: 'Virginia Tech · NSF-funded',
+    tagClass: 'text-violet-700',
+    blurb:
+      'LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, automating authoring of 100+ ROS 2 / Gazebo environments with stateful task graphs.',
+    stack: ['LangGraph', 'Llama 3', 'ROS 2', 'Gazebo', 'Python'],
+    metrics: [
+      { label: 'Manual work', value: '−40 hrs/wk' },
+      { label: 'Envs', value: '100+' },
+      { label: 'Inference', value: 'Local' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan',
+    repoLabel: 'GitHub profile (source private)',
+  },
+  {
+    title: 'Physiological Stress Classifier',
+    context: 'Virginia Tech · Personal',
+    tagClass: 'text-violet-700',
+    blurb:
+      'Developed a Conv1D Autoencoder-based multimodal pipeline on the WESAD dataset for unsupervised compression and three-class emotion classification of physiological signals (BVP, EDA, EMG, TEMP), achieving 83.5% accuracy across 15 subjects.',
+    stack: ['Python', 'PyTorch', 'scikit-learn', 'NumPy', 'Pandas'],
+    metrics: [
+      { label: 'Accuracy', value: '83.5%' },
+      { label: 'Subjects', value: '15' },
+      { label: 'Signals', value: '4-modal' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/BioelectronicsAiWesad.git',
+    repoLabel: 'GitHub profile',
+  },
+  {
+    title: 'Medical Imaging Inference Pipeline',
+    context: 'GE HealthCare · Production',
+    tagClass: 'text-sky-700',
+    blurb:
+      'TensorRT-optimized Swin Transformer UNETR for FDA-regulated MRI. ONNX export, FP16 with selective FP32, custom CUDA plugins, and TensorRT layer fusion enabling real-time intraoperative use.',
+    stack: ['PyTorch', 'TensorRT', 'CUDA/C++', 'ONNX', 'Kubernetes', 'IEC 62304'],
+    metrics: [
+      { label: 'Throughput', value: '+20%' },
+      { label: 'Deploys', value: '+80% faster' },
+      { label: 'Defects', value: '−60%' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan',
+    repoLabel: 'GitHub profile (source private)',
+  },
+  {
+    title: 'CANavigator — Brain-Inspired Drone Navigation Framework',
+    context: 'Virginia Tech · M.S. Thesis',
+    tagClass: 'text-violet-700',
+    blurb:
+      'Conflict-resolution framework on a MISD architecture for 3D autonomous UAV navigation. Validated across three real-world-mapped simulation environments with statistically significant gains.',
+    stack: ['Python', 'MISD', 'Control Systems', 'Simulation'],
+    metrics: [
+      { label: 'Energy', value: '−34.5%' },
+      { label: 'Time', value: '−34.6%' },
+      { label: 'Significance', value: 'p < 0.0001' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/CANavigator',
+    repoLabel: 'View source',
+  },
+];
+
+const experience = [
+  {
+    company: 'Virginia Tech',
+    role: 'Graduate AI/ML Researcher',
+    period: '2024 — Present',
+    location: 'Blacksburg, VA',
+    bullets: [
+      'Designed and experimentally validated a brain-inspired UAV navigation system achieving 34.6% reduction in compute energy and elapsed time over baseline (p < 0.0001, n=1,000 runs, 3 real-world-mapped environments) - NSF-funded.',
+      'Architected a LangGraph + Llama 3 multi-agent system for grammar-constrained SDF XML generation, automating 100+ simulation environments and eliminating 40 hours/week of manual authoring.',
+    ],
+  },
+  {
+    company: 'GE HealthCare',
+    role: 'Software Engineer II',
+    period: '2022 — 2024',
+    location: 'Bengaluru, IN',
+    bullets: [
+      'Led the technical architecture migration from a legacy C++ monolith to Kubernetes-based Java/Spring Boot services, reducing MRI application runtime by 80%, by designing and implementing image normalization and segmentation algorithms in C++.',
+      'Profiled and optimized a Swin Transformer segmentation model end-to-end - ONNX export, FP16 precision tuning, custom CUDA/C++ plugin authoring for unsupported ops, and layer fusion via TensorRT builder API - achieving 20% throughput uplift on FDA-regulated hardware enabling real-time intraoperative use.',
+      'Developed a multimodal MRI report generation system (MedCLIP, PyTorch, TensorRT) fusing scan sequences with patient history, achieving quantifiable impact with a 6.5% improvement in diagnostic classification F1 over baselines.',
+      'Introduced automated quality gates and CI/CD pipelines (Jenkins, SonarQube) for production deployment and optimization, reducing release defects by 60% while maintaining 0 patient-safety regressions across 12 quarterly releases.',
+      'Recognized with the GE Impact Award for independently modernizing a critical legacy MR imaging application to production microservices, directly improving clinical software delivery at scale.'
+    ],
+  },
+  {
+    company: 'TNM Electronics',
+    role: 'Software Engineer I',
+    period: '2020 — 2022',
+    location: 'Delhi NCR, IN',
+    bullets: [
+      'Owned the full platform from day one; architected an AWS-backed microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT broker), scaling from 0 to 1000+ devices while sustaining 99.9% uptime.',
+      'Co-invented and patented a master-slave microcontroller communication system for home automation, cutting final product BOM cost 80% and directly enabling first design-win customers.',
+      'Reduced field bug reports 98% vs. prior manual integration method by designing a structured hardware-software validation workflow as the company’s sole engineer.'
+    ],
+  },
+  {
+    company: 'Mahindra Susten',
+    role: 'Research Intern',
+    period: '2018 — 2020',
+    location: 'Pune, IN',
+    bullets: [
+      'Built a Linux-based autonomous quadcopter controller (MAVLink + advanced control) and integrated it into Mahindra Susten’s solar ops—automating thermal fault detection and reporting, delivering a 35% reduction in labor costs and faster issue triage.',
+    ],
+  },
+];
+
+const education = [
+  {
+    school: 'Virginia Polytechnic Institute and State University',
+    degree: 'M.S., Computer Engineering (Thesis Track)',
+    period: 'Aug 2024 — May 2026',
+    location: 'Blacksburg, VA',
+    bullets: [
+      'Defended M.S. Thesis on Brain-Inspired Drone Navigation System using Conflict Architecture — 4.0 GPA.',
+      'Coursework: CS5424 Advanced Machine Learning, CS5465 Applications of Machine Learning, ECE5504 Computer Architecture.',
+      'Honors: Phi Kappa Phi (top 10% of Master’s graduates) and Omicron Delta Kappa National Leadership Honor Society, Virginia Tech, 2026.',
+    ],
+  },
+  {
+    school: 'Uttarakhand Technical University',
+    degree: 'B.E., Electronics and Communication Engineering',
+    period: 'Jul 2016 — Dec 2020',
+    location: 'Uttarakhand, IN',
+    bullets: [
+      'Graduated with First Division.',
+    ],
+  },
+];
+
+---
+
+<Layout>
+  <!-- Nav -->
+  <header class="sticky top-0 z-50 border-b border-zinc-200/70 bg-gradient-to-r from-orange-50/80 via-sky-50/70 via-50% to-violet-50/80 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+      <a href="#top" class="text-sm font-semibold tracking-tight text-zinc-900 hover:text-black">
+        Vikhyat Chauhan
+      </a>
+      <div class="hidden gap-7 text-sm text-zinc-600 sm:flex">
+        <a href="#experience" class="transition hover:text-zinc-900">Experience</a>
+        <a href="#projects" class="transition hover:text-zinc-900">Projects</a>
+        <a href="/blog" class="transition hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="transition hover:text-zinc-900">Personal</a>
+        <a href="#education" class="transition hover:text-zinc-900">Education</a>
+        <a href="#contact" class="transition hover:text-zinc-900">Contact</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <a
+          href={resumePdf}
+          download="Vikhyat-Chauhan-Resume.pdf"
+          class="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900"
+        >
+          Résumé
+        </a>
+        <button
+          id="mobile-nav-toggle"
+          type="button"
+          aria-label="Open menu"
+          aria-controls="mobile-nav"
+          aria-expanded="false"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900 sm:hidden"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+    <div id="mobile-nav" class="hidden border-t border-zinc-200/70 sm:hidden">
+      <div class="mx-auto grid max-w-6xl gap-1 px-4 py-3 text-sm text-zinc-700">
+        <a href="#experience" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Experience</a>
+        <a href="#projects" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Projects</a>
+        <a href="/blog" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Personal</a>
+        <a href="#education" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Education</a>
+        <a href="#contact" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    (() => {
+      const btn = document.getElementById('mobile-nav-toggle');
+      const menu = document.getElementById('mobile-nav');
+      if (!btn || !menu) return;
+      const close = () => {
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      };
+      btn.addEventListener('click', () => {
+        const open = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!open));
+      });
+      menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    })();
+  </script>
+
+  <main id="top" class="mx-auto max-w-6xl px-4 sm:px-6">
+    <!-- HERO -->
+    <section class="pt-10 pb-14 sm:pt-28 sm:pb-24 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12">
+     <div>
+      <div data-animate style="--delay: 0ms" class="mb-6 flex items-start gap-2 text-xs text-zinc-600 sm:mb-8 sm:items-center">
+        <span class="relative mt-[5px] flex h-1.5 w-1.5 flex-shrink-0 sm:mt-0">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60"></span>
+          <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+        </span>
+        <span class="min-w-0 tracking-wide">Open to AI/ML roles · US work authorized · No sponsorship required</span>
+      </div>
+
+      <div data-animate style="--delay: 60ms" class="mb-10 flex justify-center lg:hidden">
+        <div class="hero-card group relative">
+          <span aria-hidden="true" class="hero-card__halo"></span>
+          <span aria-hidden="true" class="hero-card__back"></span>
+          <img
+            src="/vikhyat-hero.jpeg"
+            alt="Vikhyat Chauhan"
+            class="hero-card__img h-64 w-52 sm:h-80 sm:w-64"
+          />
+        </div>
+      </div>
+
+      <h1 data-animate style="--delay: 80ms" class="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+        Vikhyat Chauhan
+      </h1>
+      <p data-animate style="--delay: 160ms" class="mt-2 text-lg text-zinc-600 sm:text-xl">
+        Hi, I'm Vikhyat — an LLM &amp; RAG infrastructure engineer who likes shipping AI that has to actually work on real hardware, for real people.
+      </p>
+
+      <p data-animate style="--delay: 240ms" class="mt-8 max-w-2xl text-[15px] leading-relaxed text-zinc-700">
+        I spent two years at <span class="font-medium text-zinc-900">GE HealthCare</span> getting FDA-regulated MRI
+        models onto Kubernetes — the kind of work where a missed edge case shows up in an operating room, so you
+        learn to care a lot about latency, reproducibility, and the boring parts of MLOps. These days I'm finishing
+        my M.S. in Computer Engineering at <span class="font-medium text-zinc-900">Virginia Tech</span> (GPA 4.0),
+        researching brain-inspired autonomous systems and building RAG pipelines from scratch — no LangChain,
+        just the parts I actually need. Outside of work I'm usually tinkering with multi-agent setups, reading
+        neuroscience papers I'm only half-qualified for, or chasing whatever rabbit hole the latest paper sends me down.
+      </p>
+
+      <div data-animate style="--delay: 320ms" class="mt-8 flex flex-wrap items-center gap-3 text-sm">
+        <a
+          href={resumePdf}
+          download="Vikhyat-Chauhan-Resume.pdf"
+          class="inline-flex items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 font-medium text-white transition hover:bg-black"
+        >
+          Download résumé
+        </a>
+        <a
+          href="https://github.com/Vikhyat-Chauhan"
+          target="_blank" rel="noopener"
+          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+        >
+          GitHub
+        </a>
+        <a
+          href="https://www.linkedin.com/in/vikhyat-chauhan/"
+          target="_blank" rel="noopener"
+          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+        >
+          LinkedIn
+        </a>
+        <a
+          href="mailto:vikhyat.chauhan@gmail.com"
+          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+        >
+          Email
+        </a>
+      </div>
+     </div>
+
+      <div data-animate style="--delay: 120ms" class="hidden lg:mt-0 lg:flex lg:justify-end">
+        <div class="hero-card group relative">
+          <span aria-hidden="true" class="hero-card__halo"></span>
+          <span aria-hidden="true" class="hero-card__back"></span>
+          <img
+            src="/vikhyat-hero.jpeg"
+            alt="Vikhyat Chauhan"
+            class="hero-card__img lg:h-[28rem] lg:w-[22rem]"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Experience" subtitle="Full details in résumé." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-sky-700 lg:block">
+          {experience.length} roles · 2018 — present
+        </div>
+      </aside>
+
+      <div class="mt-10 space-y-10 lg:mt-0">
+        {experience.map((e, i) => (
+          <div data-animate style={`--delay: ${i * 60}ms`} class="grid gap-3 sm:grid-cols-[140px_1fr] sm:gap-8">
+            <div class="font-mono text-xs text-zinc-500 sm:pt-1">{e.period}</div>
+            <div>
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <h3 class="text-base font-semibold text-zinc-900">{e.role}</h3>
+                <span class="text-zinc-400">·</span>
+                <span class="text-base text-zinc-700">{e.company}</span>
+                <span class="text-xs text-zinc-500">— {e.location}</span>
+              </div>
+              <ul class="mt-3 space-y-1.5 text-[15px] leading-relaxed text-zinc-600">
+                {e.bullets.map((b) => (
+                  <li class="flex gap-2.5">
+                    <span class="mt-2.5 inline-block h-px w-3 flex-shrink-0 bg-zinc-300"></span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Projects" subtitle="Selected production and research work." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-orange-700 lg:block">
+          {projects.length} MOST RECENT 
+        </div>
+      </aside>
+
+      <div class="mt-10 lg:mt-0">
+        {projects.map((p, i) => (
+          <article
+            data-animate
+            style={`--delay: ${i * 60}ms`}
+            class="project-card grid gap-6 border-b border-zinc-200 last:border-b-0 sm:grid-cols-[1fr_auto] sm:gap-12"
+          >
+            <div>
+              <div class={`text-xs uppercase tracking-[0.16em] ${p.tagClass || 'text-orange-700'}`}>{p.context}</div>
+              <h3 class="mt-2 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">{p.title}</h3>
+              <p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-zinc-600">{p.blurb}</p>
+
+              <div class="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] text-zinc-500">
+                {p.stack.map((t, i) => (
+                  <span>{t}{i < p.stack.length - 1 ? ' ·' : ''}</span>
+                ))}
+              </div>
+
+              <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+                {p.deepDive && (
+                  <a
+                    href={p.deepDive}
+                    class="font-medium text-orange-700 underline-offset-4 transition hover:text-orange-900 hover:underline"
+                  >
+                    Read the deep-dive →
+                  </a>
+                )}
+                {p.repo && (
+                  <a
+                    href={p.repo} target="_blank" rel="noopener"
+                    class="font-medium text-zinc-700 underline-offset-4 transition hover:text-zinc-900 hover:underline"
+                  >
+                    {p.repoLabel || 'View source'} →
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div class="flex flex-row flex-wrap gap-x-6 gap-y-3 sm:flex-col sm:gap-4 sm:text-right">
+              {p.metrics.map((m) => (
+                <div>
+                  <div class="font-mono text-base font-semibold text-zinc-900 sm:text-lg">{m.value}</div>
+                  <div class="text-[11px] uppercase tracking-wider text-zinc-500">{m.label}</div>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Blog" subtitle="Pinned posts." />
+        <div class="mt-3 font-mono text-[11px] uppercase tracking-wider text-violet-700">
+          <a href="/blog" class="hover:text-violet-900 hover:underline underline-offset-4">Full archive →</a>
+        </div>
+      </aside>
+
+      <div class="mt-10 divide-y divide-zinc-200 lg:mt-0">
+        {writing.map((w, i) => (
+          <a
+            href={w.href}
+            data-animate
+            style={`--delay: ${i * 60}ms`}
+            class="group grid items-baseline gap-2 py-5 first:pt-0 transition-colors hover:bg-white/40 sm:grid-cols-[120px_1fr_auto] sm:gap-8"
+          >
+            <div class="font-mono text-xs uppercase tracking-wider text-zinc-500">{w.tag}</div>
+            <div>
+              <h4 class="font-medium text-zinc-900">{w.title}</h4>
+              <p class="mt-1 text-sm text-zinc-600">{w.blurb}</p>
+            </div>
+            <span class="text-sm text-zinc-500 transition group-hover:text-zinc-900">Read →</span>
+          </a>
+        ))}
+        {writing.length === 0 && (
+          <p class="py-5 text-sm text-zinc-500">
+            No pinned posts. <a href="/blog" class="text-orange-700 underline-offset-4 hover:underline">Browse the archive →</a>
+          </p>
+        )}
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Education" subtitle="Degrees and honors." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-violet-700 lg:block">
+          {education.length} degrees · 2016 — 2026
+        </div>
+      </aside>
+
+      <div class="mt-10 space-y-10 lg:mt-0">
+        {education.map((ed, i) => (
+          <div data-animate style={`--delay: ${i * 60}ms`} class="grid gap-3 sm:grid-cols-[140px_1fr] sm:gap-8">
+            <div class="font-mono text-xs text-zinc-500 sm:pt-1">{ed.period}</div>
+            <div>
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <h3 class="text-base font-semibold text-zinc-900">{ed.degree}</h3>
+                <span class="text-zinc-400">·</span>
+                <span class="text-base text-zinc-700">{ed.school}</span>
+                <span class="text-xs text-zinc-500">— {ed.location}</span>
+              </div>
+              <ul class="mt-3 space-y-1.5 text-[15px] leading-relaxed text-zinc-600">
+                {ed.bullets.map((b) => (
+                  <li class="flex gap-2.5">
+                    <span class="mt-2.5 inline-block h-px w-3 flex-shrink-0 bg-zinc-300"></span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Contact" subtitle="Best way to reach me." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-emerald-700 lg:block">
+          ↳ Email preferred
+        </div>
+      </aside>
+
+      <div data-animate class="mt-8 grid gap-8 sm:grid-cols-2 lg:mt-0">
+        <p class="max-w-md text-[15px] leading-relaxed text-zinc-700">
+          I'm focused on <span class="font-medium text-zinc-900">LLM &amp; RAG infrastructure</span> roles —
+          production retrieval systems, eval pipelines, and inference cost / latency optimization.
+          Background in FDA-regulated medical AI is a bonus for clinical-grade deploys.
+          US-authorized, no sponsorship needed, open to relocation.
+        </p>
+        <div class="space-y-2 text-sm">
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-zinc-200 pb-2">
+            <span class="text-zinc-500">Email</span>
+            <a href="mailto:vikhyat.chauhan@gmail.com" class="break-all text-right text-zinc-900 hover:underline underline-offset-4">vikhyat.chauhan@gmail.com</a>
+          </div>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-zinc-200 pb-2">
+            <span class="text-zinc-500">Phone</span>
+            <a href="tel:+12016166373" class="text-right text-zinc-900 hover:underline underline-offset-4">+1 (201) 616-6373</a>
+          </div>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-zinc-200 pb-2">
+            <span class="text-zinc-500">LinkedIn</span>
+            <a href="https://www.linkedin.com/in/vikhyat-chauhan/" target="_blank" rel="noopener" class="break-all text-right text-zinc-900 hover:underline underline-offset-4">vikhyat-chauhan</a>
+          </div>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-zinc-200 pb-2">
+            <span class="text-zinc-500">GitHub</span>
+            <a href="https://github.com/Vikhyat-Chauhan" target="_blank" rel="noopener" class="break-all text-right text-zinc-900 hover:underline underline-offset-4">Vikhyat-Chauhan</a>
+          </div>
+          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-2">
+            <span class="text-zinc-500">Location</span>
+            <span class="text-right text-zinc-900">Blacksburg, VA · Open to relocation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Chat />
+
+    <footer class="mt-4 border-t border-zinc-200 py-8 text-xs text-zinc-500">
+      <div class="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+        <div>© {new Date().getFullYear()} Vikhyat Chauhan</div>
+        <div class="font-mono">Astro · Tailwind · Netlify · RAG: FastAPI + Cloud Run</div>
+      </div>
+    </footer>
+  </main>
+</Layout>

@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-accent: oklch(0.78 0.16 75);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: oklch(0.78 0.16 75 / 0.3);
+}
+
+/* ============================================================
+   Dark theme — applied when <html> has the `dark` class.
+   We override Tailwind utilities used across the site rather
+   than touching every template. Contrast tuned for AA on the
+   dark surface (#0a0a0a base, #18181b card).
+   ============================================================ */
+
+html.dark {
+  background-color: #0a0a0a;
+  color-scheme: dark;
+}
+
+html.dark body { color: #e4e4e7; }
+.dark ::selection { background-color: rgb(251 146 60 / 0.35); color: #fafafa; }
+
+/* ---- Surfaces ---- */
+.dark .bg-stone-50 { background-color: #0a0a0a; }
+.dark .bg-stone-100 { background-color: #18181b; }
+.dark .bg-white { background-color: #18181b; }
+.dark .hover\:bg-white\/40:hover { background-color: rgb(39 39 42 / 0.45); }
+.dark .hover\:bg-white\/60:hover { background-color: rgb(39 39 42 / 0.55); }
+.dark .hover\:bg-zinc-100:hover { background-color: #27272a; }
+.dark .bg-zinc-100 { background-color: #27272a; }
+.dark .bg-zinc-200,
+.dark .bg-zinc-300 { background-color: #3f3f46; }
+.dark .bg-zinc-200\/40 { background-color: rgb(63 63 70 / 0.4); }
+.dark .bg-zinc-400 { background-color: #52525b; }
+
+/* Lift the primary dark button so it reads on a dark page */
+.dark .bg-zinc-900 { background-color: #fafafa; color: #0a0a0a; }
+.dark .hover\:bg-black:hover { background-color: #ffffff; }
+
+/* Accent tints — much darker so they don't blow out on dark bg */
+.dark .bg-orange-50 { background-color: rgb(124 45 18 / 0.25); }
+.dark .bg-orange-100 { background-color: rgb(124 45 18 / 0.35); }
+.dark .hover\:bg-orange-50:hover { background-color: rgb(124 45 18 / 0.3); }
+.dark .bg-sky-50 { background-color: rgb(7 89 133 / 0.25); }
+.dark .bg-violet-50 { background-color: rgb(76 29 149 / 0.25); }
+
+/* ---- Text ---- */
+.dark .text-zinc-900 { color: #fafafa; }
+.dark .text-zinc-800 { color: #e4e4e7; }
+.dark .text-zinc-700 { color: #d4d4d8; }
+.dark .text-zinc-600,
+.dark .text-zinc-500 { color: #a1a1aa; }
+.dark .text-zinc-400 { color: #71717a; }
+.dark .text-zinc-300 { color: #52525b; }
+.dark .hover\:text-zinc-900:hover { color: #fafafa; }
+.dark .group:hover .group-hover\:text-zinc-900 { color: #fafafa; }
+.dark .hover\:text-black:hover { color: #ffffff; }
+
+/* Accent text — boost lightness for AA legibility on dark bg */
+.dark .text-orange-700 { color: #fb923c; }
+.dark .text-orange-800 { color: #fdba74; }
+.dark .text-orange-900 { color: #fed7aa; }
+.dark .hover\:text-orange-700:hover { color: #fb923c; }
+.dark .hover\:text-orange-800:hover { color: #fdba74; }
+.dark .hover\:text-orange-900:hover { color: #fed7aa; }
+.dark .text-sky-700 { color: #38bdf8; }
+.dark .text-violet-700 { color: #a78bfa; }
+.dark .text-violet-900 { color: #c4b5fd; }
+.dark .hover\:text-violet-900:hover { color: #c4b5fd; }
+.dark .text-emerald-600 { color: #34d399; }
+.dark .text-emerald-700 { color: #34d399; }
+
+/* Disabled state colors on the chat send button etc */
+.dark .disabled\:bg-zinc-200:disabled { background-color: #27272a; }
+.dark .disabled\:text-zinc-400:disabled { color: #52525b; }
+
+/* placeholder */
+.dark .placeholder\:text-zinc-400::placeholder { color: #52525b; }
+
+/* ---- Borders ---- */
+.dark .border-zinc-200 { border-color: #27272a; }
+.dark .border-zinc-200\/70 { border-color: rgb(39 39 42 / 0.7); }
+.dark .border-zinc-300 { border-color: #3f3f46; }
+.dark .border-zinc-400 { border-color: #52525b; }
+.dark .border-zinc-500 { border-color: #71717a; }
+.dark .hover\:border-zinc-400:hover { border-color: #52525b; }
+.dark .focus-within\:border-zinc-500:focus-within { border-color: #71717a; }
+.dark .border-orange-700\/40 { border-color: rgb(251 146 60 / 0.4); }
+.dark .hover\:border-orange-700\/40:hover { border-color: rgb(251 146 60 / 0.45); }
+
+/* ---- Rings ---- */
+.dark .ring-zinc-200 { --tw-ring-color: #27272a; }
+.dark .ring-sky-200 { --tw-ring-color: rgb(56 189 248 / 0.35); }
+.dark .ring-violet-200 { --tw-ring-color: rgb(167 139 250 / 0.35); }
+.dark .ring-orange-200 { --tw-ring-color: rgb(251 146 60 / 0.35); }
+.dark .focus\:ring-offset-stone-50:focus { --tw-ring-offset-color: #0a0a0a; }
+
+/* ---- Divide ---- */
+.dark .divide-zinc-200 > :not([hidden]) ~ :not([hidden]) { border-color: #27272a; }
+
+/* Header gradient — softer in dark, still gives the accent vibe */
+.dark header.sticky {
+  background-image: linear-gradient(
+    to right,
+    rgb(124 45 18 / 0.22),
+    rgb(7 89 133 / 0.18) 50%,
+    rgb(76 29 149 / 0.22)
+  );
+}
+
+/* Project card hover-lift */
+.dark .project-card:hover {
+  background-color: rgb(39 39 42 / 0.55);
+}
+
+/* ---- LongPost article content (.post styles live as raw CSS) ---- */
+.dark .post { color: #d4d4d8; }
+.dark .post h2,
+.dark .post h3,
+.dark .post strong { color: #fafafa; }
+.dark .post code {
+  background: rgb(244 244 245 / 0.08);
+  color: #fafafa;
+}
+.dark .post blockquote { color: #a1a1aa; border-left-color: #fb923c; }
+.dark .post hr { border-top-color: #27272a; }
+.dark .post .table-wrap { border-color: #27272a; }
+.dark .post th,
+.dark .post td { border-bottom-color: #27272a; }
+.dark .post th { background: #18181b; color: #fafafa; }
+.dark .post .callout {
+  background: rgb(124 45 18 / 0.22);
+  border-left-color: #fb923c;
+  color: #e4e4e7;
+}
+.dark .post a { color: #fb923c; }
+.dark .post a:hover { color: #fdba74; }
+
+/* ---- Chat markdown bubbles ---- */
+.dark .chat-md strong,
+.dark .chat-md h1,
+.dark .chat-md h2,
+.dark .chat-md h3 { color: #fafafa; }
+.dark .chat-md code { background: rgb(244 244 245 / 0.1); color: #fafafa; }
+.dark .chat-md blockquote { color: #a1a1aa; border-left-color: #3f3f46; }
+.dark .chat-md a { color: #fb923c; }
+
+/* ---- Theme toggle icon swap ---- */
+#theme-toggle .icon-sun { display: none; }
+html.dark #theme-toggle .icon-sun { display: inline; }
+html.dark #theme-toggle .icon-moon { display: none; }
+
+/* ---- Hero pop-out photo card ---- */
+.hero-card {
+  display: inline-block;
+  perspective: 1200px;
+  isolation: isolate;
+}
+.hero-card__img {
+  position: relative;
+  display: block;
+  object-fit: cover;
+  object-position: center 22%;
+  border-radius: 1.25rem;
+  background: #fafafa;
+  box-shadow:
+    0 1px 1px rgba(24, 24, 27, 0.04),
+    0 2px 4px rgba(24, 24, 27, 0.06),
+    0 8px 16px rgba(24, 24, 27, 0.08),
+    0 24px 48px -12px rgba(24, 24, 27, 0.25);
+  outline: 1px solid rgba(24, 24, 27, 0.06);
+  transform: rotate(-2.5deg) translateZ(0);
+  transition:
+    transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.hero-card:hover .hero-card__img,
+.hero-card:focus-within .hero-card__img {
+  transform: rotate(0deg) translateY(-6px) scale(1.02);
+  box-shadow:
+    0 1px 1px rgba(24, 24, 27, 0.05),
+    0 4px 10px rgba(24, 24, 27, 0.08),
+    0 16px 32px rgba(24, 24, 27, 0.12),
+    0 40px 80px -20px rgba(24, 24, 27, 0.35);
+}
+.hero-card__back {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #fff7ed 0%, #fdf2f8 50%, #ede9fe 100%);
+  outline: 1px solid rgba(24, 24, 27, 0.08);
+  transform: rotate(4deg) translate(10px, 12px);
+  transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: -1;
+}
+.hero-card:hover .hero-card__back,
+.hero-card:focus-within .hero-card__back {
+  transform: rotate(6deg) translate(16px, 18px);
+}
+.hero-card__halo {
+  position: absolute;
+  inset: -18%;
+  border-radius: 9999px;
+  background:
+    radial-gradient(closest-side, rgba(251, 146, 60, 0.35), transparent 70%),
+    radial-gradient(closest-side, rgba(167, 139, 250, 0.28) 0%, transparent 70%);
+  background-position: 30% 30%, 70% 70%;
+  background-repeat: no-repeat;
+  filter: blur(28px);
+  opacity: 0.75;
+  z-index: -2;
+  transition: opacity 600ms ease, filter 600ms ease;
+  pointer-events: none;
+}
+.hero-card:hover .hero-card__halo,
+.hero-card:focus-within .hero-card__halo {
+  opacity: 1;
+  filter: blur(34px);
+}
+
+.dark .hero-card__img {
+  background: #18181b;
+  outline-color: rgba(244, 244, 245, 0.08);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.45),
+    0 24px 48px -12px rgba(0, 0, 0, 0.6);
+}
+.dark .hero-card__back {
+  background: linear-gradient(135deg, #3f1d12 0%, #2a1240 60%, #11243f 100%);
+  outline-color: rgba(244, 244, 245, 0.1);
+}
+.dark .hero-card__halo {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card__img,
+  .hero-card__back,
+  .hero-card__halo {
+    transition: none;
+  }
+}

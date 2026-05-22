@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const notes = (await getCollection('personal', (n) => !n.data.draft)).sort(
+  (a, b) => +new Date(b.data.date) - +new Date(a.data.date),
+);
+
+const tagCounts = new Map<string, number>();
+for (const n of notes) {
+  for (const t of n.data.tags) tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1);
+}
+const allTags = Array.from(tagCounts.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+const tagSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+const fmt = (d: Date) =>
+  new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<Layout title="Personal — Vikhyat Chauhan">
+  <header class="sticky top-0 z-50 border-b border-zinc-200/70 bg-gradient-to-r from-orange-50/80 via-sky-50/70 via-50% to-violet-50/80 backdrop-blur">
+    <nav class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+      <a href="/" class="text-sm font-semibold tracking-tight text-zinc-900 hover:text-black">
+        ← Vikhyat Chauhan
+      </a>
+      <div class="hidden gap-7 text-sm text-zinc-600 sm:flex">
+        <a href="/#experience" class="transition hover:text-zinc-900">Experience</a>
+        <a href="/#projects" class="transition hover:text-zinc-900">Projects</a>
+        <a href="/blog" class="transition hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="text-zinc-900">Personal</a>
+        <a href="/#contact" class="transition hover:text-zinc-900">Contact</a>
+      </div>
+      <button
+        id="mobile-nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900 sm:hidden"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </nav>
+    <div id="mobile-nav" class="hidden border-t border-zinc-200/70 sm:hidden">
+      <div class="mx-auto grid max-w-5xl gap-1 px-4 py-3 text-sm text-zinc-700">
+        <a href="/#experience" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Experience</a>
+        <a href="/#projects" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Projects</a>
+        <a href="/blog" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="rounded px-2 py-2 text-zinc-900">Personal</a>
+        <a href="/#contact" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    (() => {
+      const btn = document.getElementById('mobile-nav-toggle');
+      const menu = document.getElementById('mobile-nav');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', () => {
+        const hidden = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!hidden));
+      });
+    })();
+  </script>
+
+  <main class="mx-auto max-w-5xl px-4 pb-24 pt-12 sm:px-6 sm:pt-16">
+    <section class="mb-12">
+      <div class="text-xs uppercase tracking-[0.16em] text-orange-700">A digital garden</div>
+      <h1 class="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">Personal</h1>
+      <p class="mt-3 max-w-2xl text-[15px] leading-relaxed text-zinc-600">
+        Shorter, less-polished writing — half-formed ideas, recommendations, things I'm chewing on.
+      </p>
+    </section>
+
+    <div class="grid gap-12 lg:grid-cols-[1fr_180px]">
+      <ul class="divide-y divide-zinc-200">
+        {notes.map((n) => (
+          <li>
+            <div class="group grid items-baseline gap-2 py-5 sm:grid-cols-[110px_1fr_auto] sm:gap-8">
+              <div class="font-mono text-xs uppercase tracking-wider text-zinc-500">{fmt(n.data.date)}</div>
+              <div>
+                <h2 class="font-medium text-zinc-900">
+                  <a href={`/personal/${n.id}`} class="hover:underline underline-offset-4">{n.data.title}</a>
+                </h2>
+                {n.data.blurb && <p class="mt-1 text-sm text-zinc-600">{n.data.blurb}</p>}
+                {n.data.tags.length > 0 && (
+                  <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wider">
+                    {n.data.tags.map((t) => (
+                      <a
+                        href={`/personal/tags/${tagSlug(t)}`}
+                        class="text-orange-700 transition hover:text-orange-900 hover:underline underline-offset-4"
+                      >#{t}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <a href={`/personal/${n.id}`} class="text-sm text-zinc-500 transition hover:text-zinc-900">Read →</a>
+            </div>
+          </li>
+        ))}
+        {notes.length === 0 && (
+          <li class="py-8 text-sm text-zinc-500">No notes yet — check back soon.</li>
+        )}
+      </ul>
+
+      <aside class="hidden lg:block">
+        <div class="sticky top-24">
+          <div class="font-mono text-[11px] uppercase tracking-wider text-zinc-500">Tags</div>
+          <ul class="mt-3 space-y-1.5 text-sm">
+            {allTags.map(([t, count]) => (
+              <li>
+                <a href={`/personal/tags/${tagSlug(t)}`} class="text-zinc-700 transition hover:text-orange-700">
+                  #{t} <span class="text-zinc-400">({count})</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="mt-20 border-t border-zinc-200 py-8 text-xs text-zinc-500">
+      <div class="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+        <div>© {new Date().getFullYear()} Vikhyat Chauhan</div>
+        <div class="font-mono">Astro · Tailwind · Netlify</div>
+      </div>
+    </footer>
+  </main>
+</Layout>

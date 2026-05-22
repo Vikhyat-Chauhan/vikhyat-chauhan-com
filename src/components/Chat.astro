@@ -1,0 +1,439 @@
+---
+const suggestions = [
+  'Walk me through your RAG architecture.',
+  'Why two-stage retrieval over a single dense embedder?',
+  'What\'s the hardest production bug you\'ve shipped?',
+  'How do you evaluate faithfulness?',
+];
+
+const connected = Boolean(import.meta.env.API_URL && import.meta.env.ProfessionalRAG_KEY);
+---
+
+<!-- FAB + notification bubble container -->
+<div class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+  <!-- Auto-popping tooltip / nudge bubble -->
+  <div
+    id="chat-nudge"
+    role="status"
+    class="pointer-events-none hidden max-w-[260px] origin-bottom-right scale-95 opacity-0 transition-all duration-300 ease-out"
+  >
+    <div class="pointer-events-auto relative rounded-2xl rounded-br-sm border border-zinc-200 bg-white px-4 py-3 shadow-xl shadow-zinc-900/10">
+      <button
+        id="chat-nudge-close"
+        type="button"
+        aria-label="Dismiss"
+        class="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-sm transition hover:text-zinc-900"
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+      </button>
+      <div class="flex items-start gap-2.5">
+        <span class="mt-0.5 text-base leading-none">👋</span>
+        <div>
+          <p class="text-[13px] font-medium text-zinc-900">Hey — got questions?</p>
+          <p class="mt-0.5 text-[12px] leading-snug text-zinc-600">
+            Ask my RAG assistant anything about my projects, research, or experience.
+          </p>
+        </div>
+      </div>
+      <!-- Pointer tail -->
+      <span class="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 border-b border-r border-zinc-200 bg-white"></span>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button
+    id="chat-fab"
+    type="button"
+    aria-label="Open chat — ask about my work"
+    class="relative inline-flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-zinc-900/20 transition hover:bg-black focus:outline-none focus:ring-2 focus:ring-orange-700 focus:ring-offset-2 focus:ring-offset-stone-50"
+  >
+    <!-- Pulsing notification dot -->
+    <span class="absolute -right-0.5 -top-0.5 flex h-3 w-3">
+      <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-500 opacity-75"></span>
+      <span class="relative inline-flex h-3 w-3 rounded-full border-2 border-zinc-900 bg-orange-600"></span>
+    </span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+    <span>Ask about my work</span>
+  </button>
+</div>
+
+<!-- Chat panel -->
+<div
+  id="chat-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="chat-title"
+  data-connected={connected ? 'true' : 'false'}
+  class="fixed bottom-0 right-0 z-50 hidden h-[100dvh] w-full flex-col bg-white shadow-2xl shadow-zinc-900/10 sm:bottom-6 sm:right-6 sm:h-[640px] sm:max-h-[85vh] sm:w-[400px] sm:rounded-2xl sm:border sm:border-zinc-200"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
+    <div class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-orange-100 text-orange-700">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 1v6m0 10v6m11-11h-6M7 12H1m15.5-7.5l-4.24 4.24M7.74 16.26L3.5 20.5m13-.5l-4.24-4.24M7.74 7.74L3.5 3.5" />
+        </svg>
+      </div>
+      <div>
+        <h3 id="chat-title" class="text-sm font-semibold text-zinc-900">Ask about my work</h3>
+        <p class="text-xs text-zinc-500">RAG over projects, experience & research</p>
+      </div>
+    </div>
+    <button
+      id="chat-close"
+      type="button"
+      aria-label="Close chat"
+      class="rounded-md p-1.5 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chat-messages" class="flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-5">
+    <!-- Assistant intro -->
+    <div class="flex max-w-[85%] flex-col gap-1">
+      <div class="rounded-2xl rounded-tl-sm border border-zinc-200 bg-stone-50 px-4 py-2.5 text-[14px] leading-relaxed text-zinc-800">
+        Hi — I'm a small assistant trained on Vikhyat's projects, experience, and research. Ask anything about his work in AI/ML, medical imaging, or RAG systems.
+      </div>
+      <div class="ml-1 text-[10px] uppercase tracking-wider text-zinc-400">Assistant</div>
+    </div>
+
+    <!-- Suggested prompts -->
+    <div class="flex flex-col gap-2">
+      <div class="text-[10px] font-medium uppercase tracking-wider text-zinc-400">Try asking</div>
+      <div class="flex flex-wrap gap-2">
+        {suggestions.map((s) => (
+          <button
+            type="button"
+            data-suggestion={s}
+            class="suggestion-chip rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-left text-xs text-zinc-700 transition hover:border-orange-700/40 hover:bg-orange-50 hover:text-orange-800"
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Composer -->
+  <form id="chat-form" class="border-t border-zinc-200 px-4 py-3">
+    <div class="flex items-end gap-2 rounded-xl border border-zinc-300 bg-white px-3 py-2 focus-within:border-zinc-500">
+      <textarea
+        id="chat-input"
+        rows="1"
+        placeholder="Ask about a project, role, or skill…"
+        class="max-h-32 flex-1 resize-none bg-transparent text-[14px] text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
+      ></textarea>
+      <button
+        type="submit"
+        aria-label="Send"
+        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-orange-700 text-white transition hover:bg-orange-800 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5" />
+          <polyline points="5 12 12 5 19 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="mt-2 flex items-center justify-between px-1 text-[10px] text-zinc-400">
+      <span>Press <kbd class="rounded border border-zinc-200 bg-stone-100 px-1 font-mono">Enter</kbd> to send</span>
+      <span class="font-mono">
+        {connected ? (
+          <span class="text-emerald-600">RAG · connected</span>
+        ) : (
+          <span>RAG · not configured</span>
+        )}
+      </span>
+    </div>
+  </form>
+</div>
+
+<style is:global>
+  .chat-md > * + * { margin-top: 0.5rem; }
+  .chat-md p { margin: 0; }
+  .chat-md ul, .chat-md ol { padding-left: 1.25rem; list-style: revert; }
+  .chat-md ul { list-style-type: disc; }
+  .chat-md ol { list-style-type: decimal; }
+  .chat-md li + li { margin-top: 0.15rem; }
+  .chat-md strong { font-weight: 600; color: #18181b; }
+  .chat-md em { font-style: italic; }
+  .chat-md a { color: #c2410c; text-decoration: underline; }
+  .chat-md code {
+    background: rgba(24, 24, 27, 0.06);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.85em;
+  }
+  .chat-md pre {
+    background: #18181b;
+    color: #fafafa;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+  }
+  .chat-md pre code { background: transparent; padding: 0; color: inherit; }
+  .chat-md h1, .chat-md h2, .chat-md h3 { font-weight: 600; color: #18181b; }
+  .chat-md h1 { font-size: 1.05em; }
+  .chat-md h2 { font-size: 1em; }
+  .chat-md h3 { font-size: 0.95em; }
+  .chat-md blockquote {
+    border-left: 3px solid #d4d4d8;
+    padding-left: 0.6rem;
+    color: #52525b;
+  }
+</style>
+
+<script>
+  import { marked } from 'marked';
+  import DOMPurify from 'dompurify';
+  import {
+    trackChatMessage,
+    trackChatOpen,
+    trackChatClose,
+    trackChatSuggestion,
+    trackChatNudgeDismiss,
+  } from '../lib/track';
+
+  marked.setOptions({ gfm: true, breaks: true });
+
+  function renderMarkdown(text) {
+    return DOMPurify.sanitize(marked.parse(text));
+  }
+
+  (() => {
+    const fab = document.getElementById('chat-fab');
+    const panel = document.getElementById('chat-panel');
+    const connected = panel.dataset.connected === 'true';
+    const fabWrap = fab.parentElement;
+    const nudge = document.getElementById('chat-nudge');
+    const nudgeClose = document.getElementById('chat-nudge-close');
+    const closeBtn = document.getElementById('chat-close');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-input');
+    const messages = document.getElementById('chat-messages');
+
+    const NUDGE_KEY = 'chat-nudge-dismissed';
+
+    function showNudge() {
+      if (sessionStorage.getItem(NUDGE_KEY)) return;
+      if (!panel.classList.contains('hidden')) return;
+      nudge.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        nudge.classList.remove('scale-95', 'opacity-0');
+        nudge.classList.add('scale-100', 'opacity-100');
+      });
+    }
+    function hideNudge(persist) {
+      nudge.classList.add('scale-95', 'opacity-0');
+      nudge.classList.remove('scale-100', 'opacity-100');
+      setTimeout(() => nudge.classList.add('hidden'), 300);
+      if (persist) sessionStorage.setItem(NUDGE_KEY, '1');
+    }
+
+    function openPanel(source) {
+      const wasNudgeVisible = !nudge.classList.contains('hidden');
+      hideNudge(true);
+      panel.classList.remove('hidden');
+      panel.classList.add('flex');
+      fabWrap.style.display = 'none';
+      setTimeout(() => input.focus(), 50);
+      trackChatOpen(source || (wasNudgeVisible ? 'nudge' : 'fab'));
+    }
+    function closePanel() {
+      panel.classList.add('hidden');
+      panel.classList.remove('flex');
+      fabWrap.style.display = '';
+      trackChatClose();
+    }
+
+    // Auto-pop nudge after a few seconds (once per session)
+    setTimeout(showNudge, 2500);
+    nudgeClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideNudge(true);
+      trackChatNudgeDismiss();
+    });
+
+    fab.addEventListener('click', () => openPanel('fab'));
+    closeBtn.addEventListener('click', closePanel);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.classList.contains('hidden')) closePanel();
+    });
+
+    // Auto-grow textarea
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 128) + 'px';
+    });
+
+    // Enter to send, Shift+Enter for newline
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    // Suggestion chips
+    document.querySelectorAll('.suggestion-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const suggestion = chip.dataset.suggestion || '';
+        input.value = suggestion;
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+        trackChatSuggestion(suggestion);
+      });
+    });
+
+    function appendMessage(role, text) {
+      const wrap = document.createElement('div');
+      wrap.className =
+        'flex max-w-[85%] flex-col gap-1 ' +
+        (role === 'user' ? 'self-end items-end' : '');
+      const bubble = document.createElement('div');
+      bubble.className =
+        role === 'user'
+          ? 'rounded-2xl rounded-tr-sm bg-zinc-900 px-4 py-2.5 text-[14px] leading-relaxed text-white'
+          : 'chat-md rounded-2xl rounded-tl-sm border border-zinc-200 bg-stone-50 px-4 py-2.5 text-[14px] leading-relaxed text-zinc-800';
+      if (role === 'user') {
+        bubble.textContent = text;
+      } else {
+        bubble.innerHTML = renderMarkdown(text);
+      }
+      const tag = document.createElement('div');
+      tag.className = (role === 'user' ? 'mr-1 ' : 'ml-1 ') + 'text-[10px] uppercase tracking-wider text-zinc-400';
+      tag.textContent = role === 'user' ? 'You' : 'Assistant';
+      wrap.appendChild(bubble);
+      wrap.appendChild(tag);
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function appendTyping() {
+      const wrap = document.createElement('div');
+      wrap.id = 'typing-indicator';
+      wrap.className = 'flex max-w-[85%] flex-col gap-1';
+      wrap.innerHTML =
+        '<div class="rounded-2xl rounded-tl-sm border border-zinc-200 bg-stone-50 px-4 py-3"><span class="inline-flex gap-1"><span class="h-1.5 w-1.5 animate-pulse rounded-full bg-zinc-400"></span><span class="h-1.5 w-1.5 animate-pulse rounded-full bg-zinc-400" style="animation-delay:.15s"></span><span class="h-1.5 w-1.5 animate-pulse rounded-full bg-zinc-400" style="animation-delay:.3s"></span></span></div>';
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function startAssistantBubble() {
+      const wrap = document.createElement('div');
+      wrap.className = 'flex max-w-[85%] flex-col gap-1';
+      const bubble = document.createElement('div');
+      bubble.className =
+        'chat-md rounded-2xl rounded-tl-sm border border-zinc-200 bg-stone-50 px-4 py-2.5 text-[14px] leading-relaxed text-zinc-800';
+      const tag = document.createElement('div');
+      tag.className = 'ml-1 text-[10px] uppercase tracking-wider text-zinc-400';
+      tag.textContent = 'Assistant';
+      const meta = document.createElement('div');
+      meta.className = 'ml-1 hidden gap-2 text-[10px] font-mono text-zinc-400';
+      wrap.appendChild(bubble);
+      wrap.appendChild(tag);
+      wrap.appendChild(meta);
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+      return { bubble, meta };
+    }
+
+    async function streamRagResponse(message) {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, top_k: 5 }),
+      });
+
+      if (!res.ok || !res.body) {
+        const detail = await res.text().catch(() => '');
+        throw new Error('HTTP ' + res.status + (detail ? ' — ' + detail.slice(0, 200) : ''));
+      }
+
+      document.getElementById('typing-indicator')?.remove();
+      const { bubble, meta } = startAssistantBubble();
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let sources = [];
+      let metrics = null;
+      let answer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          let payload;
+          try {
+            payload = JSON.parse(line.slice(6));
+          } catch {
+            continue;
+          }
+          if (payload.type === 'token') {
+            answer += payload.token;
+            bubble.innerHTML = renderMarkdown(answer);
+            messages.scrollTop = messages.scrollHeight;
+          } else if (payload.type === 'sources') {
+            sources = payload.sources || [];
+          } else if (payload.type === 'done') {
+            metrics = payload.metrics || null;
+          }
+        }
+      }
+
+      const parts = [];
+      if (sources.length) parts.push(sources.length + ' source' + (sources.length === 1 ? '' : 's'));
+      if (metrics && typeof metrics.total_ms === 'number') parts.push(Math.round(metrics.total_ms) + ' ms');
+      if (metrics && typeof metrics.cost_usd === 'number') parts.push('$' + metrics.cost_usd.toFixed(4));
+      if (parts.length) {
+        meta.textContent = parts.join(' · ');
+        meta.classList.remove('hidden');
+        meta.classList.add('flex');
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      appendMessage('user', text);
+      trackChatMessage(text);
+      input.value = '';
+      input.style.height = 'auto';
+      appendTyping();
+
+      if (!connected) {
+        setTimeout(() => {
+          document.getElementById('typing-indicator')?.remove();
+          appendMessage(
+            'assistant',
+            "RAG backend isn't configured. Set API_URL and ProfessionalRAG_KEY in Netlify env (see .env.example) and redeploy."
+          );
+        }, 600);
+        return;
+      }
+
+      try {
+        await streamRagResponse(text);
+      } catch (err) {
+        document.getElementById('typing-indicator')?.remove();
+        appendMessage('assistant', "Couldn't reach the RAG service: " + (err && err.message ? err.message : 'unknown error'));
+      }
+    });
+  })();
+</script>

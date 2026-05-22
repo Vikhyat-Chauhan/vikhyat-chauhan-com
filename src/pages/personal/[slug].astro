@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import LongPost from '../../components/LongPost.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('personal', (n) => !n.data.draft);
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+const { title, blurb, date, tags } = note.data;
+
+const dateLabel = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+
+const subtitle = [blurb, tags.length ? tags.map((t) => `#${t}`).join('  ') : null]
+  .filter(Boolean)
+  .join('  ·  ');
+---
+
+<LongPost title={title} subtitle={subtitle} date={dateLabel}>
+  <Content />
+</LongPost>

@@ -1,0 +1,157 @@
+---
+title: "$65 a month to keep a portfolio demo alive"
+subtitle: "How GCP Cloud Run's minimum instance billing cost me $65.75 in month one, what I changed, and what AWS had waiting on the other side."
+blurb: "How GCP Cloud Run's minimum instance billing cost me $65.75 in month one, what I changed, and what AWS had waiting on the other side."
+date: 2026-05-15
+tag: Engineering
+readingTime: "7 min read"
+projectSlug: professional-rag
+pinned: false
+---
+import Callout from '../../components/Callout.astro';
+
+$65.75. One month. Zero paying users.
+
+That was the first GCP bill for [ProfessionalRAG](https://github.com/Vikhyat-Chauhan/ProfessionalRAG) — a portfolio project
+I built to demonstrate production-grade RAG engineering, not to generate revenue. Annualized: ~$789/year to keep a demo alive.
+I moved everything to AWS the same day I saw that number. Here's the exact breakdown: what GCP was charging for, what changed,
+and why AWS had its own surprise waiting.
+
+## What was running
+
+ProfessionalRAG is a two-stage retrieval pipeline — no LangChain, no LlamaIndex, everything from scratch. The stack:
+
+- **Ingestion:** Multi-format document reader (PDF, DOCX, PPTX, CSV, URL, GitHub repos, images via OCR) → recursive chunker
+  (1200 char / 200 overlap) → SHA-256 dedup
+- **Retrieval:** BGE embeddings → vector store → 50 candidates → cross-encoder reranker → top-5
+- **Generation:** LLM grounded on top-5 chunks, streaming SSE
+- **Observability:** Per-query latency, token count, USD cost telemetry to JSONL
+
+18 tests, a Postman collection, production-level auth that fails closed at startup if the API key is absent.
+I deployed it on GCP Cloud Run. That was the mistake.
+
+## The actual bill
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Usage Cost</th>
+        <th>Savings</th>
+        <th>Net</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Cloud Run</td><td>$67.33</td><td>−$11.09</td><td>$56.24</td></tr>
+      <tr><td>Artifact Registry</td><td>$9.50</td><td>—</td><td>$9.50</td></tr>
+      <tr><td>Cloud Build</td><td>$0.01</td><td>—</td><td>$0.01</td></tr>
+      <tr><td>App Engine</td><td>$0.01</td><td>—</td><td>$0.01</td></tr>
+      <tr><td>Cloud Storage</td><td>$0.00</td><td>—</td><td>$0.00</td></tr>
+      <tr><td><strong>Total</strong></td><td></td><td></td><td><strong>$65.75</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+Of the $56.24 Cloud Run net cost, **$42.46 — 75% — was "Services Min Instance Memory (Request-based billing)"**.
+
+<Callout title="What that line item actually means:">
+Cloud Run charges you to keep a minimum instance warm even when no traffic is hitting the endpoint.
+You can set minimum instances to zero — and accept 10-second cold starts. Or you keep one warm for a recruiter
+who might click your link at any moment. That choice costs money around the clock, regardless of traffic.
+</Callout>
+
+The remaining $9.50 is Artifact Registry — Docker image storage from every push to `main` triggering
+Cloud Build → image push → Cloud Run deploy. The CI/CD pipeline was clean. The billing wasn't.
+
+## What the old setup looked like
+
+The GCP tooling was well-engineered and worth acknowledging:
+
+- Push to `main` → Cloud Build triggers automatically
+- Builds the container, runs tests
+- Pushes image to Artifact Registry
+- Deploys new revision to Cloud Run with zero manual steps
+- ~3 minutes from push to live
+
+The developer experience was clean. The problem was the billing model for intermittent traffic, not the platform itself.
+Old stack components: ChromaDB as the local vector store, Firestore for visit analytics, GPT-4 for generation,
+`bge-large-en-v1.5` as the embedding model.
+
+## The new setup
+
+New deployment is two commands over SSH on a **t3.micro (30GB EBS)** instance:
+
+```bash
+docker build -t professional-rag .
+docker run -d -p 8080:8080 --env-file .env professional-rag
+```
+
+No pipeline. No registry. No automated trigger. What changed across the stack:
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>GCP (Old)</th>
+        <th>AWS (New)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Compute</td><td>Cloud Run (serverless)</td><td>EC2 always-on</td></tr>
+      <tr><td>CI/CD</td><td>Cloud Build → Artifact Registry</td><td>Manual docker build on instance</td></tr>
+      <tr><td>Vector Store</td><td>ChromaDB (local)</td><td>Pinecone Serverless</td></tr>
+      <tr><td>Analytics</td><td>Firestore</td><td>DynamoDB</td></tr>
+      <tr><td>LLM</td><td>GPT-4</td><td>Claude Sonnet 4.6</td></tr>
+      <tr><td>Embedding Model</td><td>bge-large-en-v1.5</td><td>bge-base-en-v1.5 (~440MB)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+The 30GB EBS volume is deliberate. The Docker image bakes in the BGE-base and cross-encoder model weights at build time
+(~500MB image), and you want headroom for logs, ingested document storage, and iterating on the image without running out
+of disk mid-build. The default 8GB on a t3.micro will catch you off guard.
+
+The embedding model downgrade from `bge-large` to `bge-base` was a deliberate quality tradeoff:
+marginal faithfulness delta on my use case, and a smaller baked-in model means cold starts at ~5 seconds
+instead of waiting on runtime model downloads.
+
+## The migration caught a bug my tests were made for
+
+Swapping Firestore for DynamoDB exposed a coupling I hadn't noticed: the `/visits` handler was still calling
+`.where().stream().to_dict()` on what was now a plain list. The 18-test suite — 3 seconds, zero network calls,
+all externals stubbed — caught it immediately.
+
+That's the class of bug that only surfaces in production if you don't have test coverage.
+Migrations are a useful forcing function: they find every assumption baked into your code that you didn't know existed.
+That's a good thing, but only if your test suite surfaces them fast rather than your logs.
+
+## What AWS had waiting
+
+I went in expecting the well-known AWS free tier — EC2 t2.micro, 12 months free, generous always-free tiers for
+S3 and DynamoDB. Then I checked the current documentation.
+
+**AWS has cut its free tier from 12 months to 6 months on several core services.** This isn't prominently announced.
+
+The first 2–3 months of any serious project are heavy iteration. By the time the architecture stabilizes and you
+want the free tier absorbing real traffic, you may have 2–3 months of buffer left, not 9.
+Verify before you build your cost model around assumptions from a few years ago.
+
+## The tradeoffs, stated plainly
+
+**Automation.** I gave up a fully automated CI/CD pipeline for two SSH commands. Deploys went from 3-minute
+push-to-live to a manual SSH session. That's a real regression in developer experience. Know what you're giving up
+before you call it a win.
+
+**Cold start behavior.** Cloud Run's cold start problem only exists because I wanted responsiveness.
+Set min instances to zero and the billing drops, but a hiring manager hitting your link at noon gets a 10-second spinner.
+That's a product decision with a dollar sign attached.
+
+**Coupling.** Firestore's query API is expressive enough to mask that you're thinking of your data as a stream
+when you should be thinking of it as a list. DynamoDB has no such illusions. Tighter constraint, fewer hidden assumptions.
+
+---
+
+*Live demo: [vikhyatchauhan.com/chat](https://vikhyatchauhan.com/chat)*  
+*Stack: BGE-base · Pinecone Serverless · Cross-encoder reranking · Claude Sonnet 4.6 · DynamoDB · Docker on EC2*

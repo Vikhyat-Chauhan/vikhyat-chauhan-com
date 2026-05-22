@@ -1,0 +1,102 @@
+Contact
+2016166373 (Mobile)
+vikhyat.chauhan@gmail.com
+www.linkedin.com/in/vikhyat-
+chauhan (LinkedIn)
+github.com/Vikhyat-Chauhan
+(Portfolio)
+Top Skills
+CUDA
+Large Language Models (LLM)
+Fine Tuning
+Languages
+Hindi (Native or Bilingual)
+German (Elementary)
+English (Full Professional)
+
+Publications
+object tracking through Deep
+Learning
+Multi-Agent Stock Prediction
+Systems: Machine Learning Models,
+Simulations, and Real-Time Trading
+Strategies
+Patents
+Vikhyat Chauhan
+AI/ML Engineer | TensorRT · RAG · LLM Systems · Medical Imaging
+ML | MS Computer Engineering, Virginia Tech
+Blacksburg, Virginia, United States
+Summary
+I build production AI systems — from TensorRT-optimized inference
+pipelines in FDA-regulated medical imaging environments to
+deployed RAG applications with two-stage retrieval and cross-
+encoder reranking. My work spans the full ML lifecycle: training,
+optimization, containerized deployment, and monitoring.At GE
+HealthCare, I migrated a monolithic MR imaging application to
+microservices and built TensorRT-optimized ML inference pipelines
+in a Kubernetes-based, FDA-regulated environment. My MS thesis
+at Virginia Tech developed a brain-inspired autonomous navigation
+framework that achieved 34.5% reduction in compute energy with
+zero deadline violations across 1,000 simulation runs.Currently
+exploring opportunities in AI/ML engineering — particularly in
+medical AI, LLM infrastructure, edge AI, and autonomous systems.
+US work authorized (STEM OPT, no sponsorship needed to start).
+Open to relocationanywhere in the US.
+Experience
+Virginia Tech
+Graduate AI/ML Researcher
+November 2024 - Present (1 year 7 months)
+Blacksburg, VA
+• Proposed and validated a brain-inspired conflict-resolution framework for
+3D UAV navigation, achieving Pareto-improving reductions of 34.55% in
+elapsed time and 34.52% in compute energy over the baseline (n=1,000 runs,
+p<0.0001) across three real-world-mapped simulation environments — NSF-
+funded
+• Developed a LangGraph + Llama 3 multi-agent pipeline for grammar-
+constrained SDF XML synthesis, enabling automated generation of 100+ ROS
+2/Gazebo simulation environments and reducing manual authoring overhead
+by ~40 hours/week
+Page 1 of 3
+SYSTEM AND METHOD FOR
+FACILITATING COMMUNICATION
+BETWEEN SLAVE AND MASTER
+MICROCONTROLLER FOR HOME
+AUTOMATION
+GE Healthcare
+Software Engineer II
+March 2022 - June 2024 (2 years 4 months)
+Bengaluru
+• Migrated C++ MR imaging monolith (stitching, normalization) to Kubernetes
+microservices — ~80% faster deployments, independent component scaling,
+IEC 62304 compliant
+• Optimized Swin Transformer UNETR segmentation model end-to-end
+— ONNX export via dynamo path, FP16 with selective FP32 overrides for
+LayerNorm stability, and TensorRT layer fusion — achieving ~20% throughput
+improvement on FDA-regulated MRI hardware
+• Introduced automated quality gates and CI/CD pipelines (Jenkins,
+SonarQube) that reduced release defects by 60% while maintaining zero
+patient-safety regressions across 12 quarterly releases.
+• Sustained zero critical patient-safety incidents across all releases by leading
+cross-functional root-cause analysis.
+The Next Move Automation
+Software Engineer I
+April 2020 - February 2022 (1 year 11 months)
+Greater Delhi Area
+• Owned the full platform from day one — architected an AWS-backed
+microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT broker),
+scaling from 0 to 1000+ devices — sustaining 99.9% uptime.
+• Reduced field bug reports 72% vs. prior manual integration method
+by designing a structured hardware-software validation workflow as the
+company's sole engineer.
+• Conceived and patented a master-slave microcontroller communication
+system for home automation — cutting final product BOM cost 90%.
+Mahindra Susten
+Research Intern
+June 2018 - March 2020 (1 year 10 months)
+Pune/Pimpri-Chinchwad Area
+Page 2 of 3
+• Built a Linux-based autonomous quadcopter controller (MAVLink + advanced
+control) and integrated it into Mahindra Susten’s solar ops—automating
+thermal fault detection and reporting, delivering a 35% reduction in labor costs
+and faster issue triage.
+Master of Science - MS, Computer Engineering (Thesis) · (August 2024 - April

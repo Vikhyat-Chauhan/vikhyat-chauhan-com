@@ -1,0 +1,144 @@
+---
+title: "Two-stage retrieval, and why a 22M-param reranker beats a bigger embedder"
+subtitle: "Building ProfessionalRAG: how I picked BGE-base + an MS-MARCO cross-encoder over a single dense retriever, and what the latency / cost / faithfulness tradeoffs actually look like in production."
+blurb: "Building ProfessionalRAG: how I picked BGE-base + an MS-MARCO cross-encoder over a single dense retriever, and what the latency / cost / faithfulness tradeoffs actually look like in production."
+date: 2026-05-14
+tag: Engineering
+readingTime: "8 min read"
+projectSlug: professional-rag
+pinned: true
+---
+import Callout from '../../components/Callout.astro';
+
+Most production RAG systems I've seen reach for a single, larger embedding model when retrieval quality drops.
+It's the obvious move — bigger encoder, better embeddings, fewer surprises. I tried it. It's not what worked.
+
+What worked, in [ProfessionalRAG](https://github.com/Vikhyat-Chauhan/ProfessionalRAG), was a smaller embedder
+(`BGE-base`, 109M params) feeding a `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker (22M params)
+over the top-20 candidates. Latency went up modestly. Faithfulness, judged by an LLM-as-judge over 50+ golden questions,
+went up materially. This post is the why.
+
+## The architecture in one diagram
+
+```text
+query
+  ↓
+[ BGE-base embedder ]      ── 768-dim, ~30ms on CPU
+  ↓
+[ FAISS top-20 ]           ── ANN over chunked corpus
+  ↓
+[ MS-MARCO cross-encoder ] ── score(query, chunk) per pair, ~80ms total
+  ↓
+top-5 → context window → LLM → answer + sources + metrics
+```
+
+The shape matters: stage 1 is *recall-optimized* (fast, embarrassingly parallel, throws a wide net),
+stage 2 is *precision-optimized* (slow per-pair, but only sees 20 candidates). Each stage gets the loss function it actually deserves.
+
+## Why not just use a bigger embedder?
+
+The intuitive fix when retrieval misses: scale the embedder. Move from `BGE-base` (109M) to `BGE-large` (335M),
+or out to a 1B+ parameter encoder. I ran this. The numbers told a less flattering story.
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Setup</th>
+        <th>Top-1 recall</th>
+        <th>P50 latency</th>
+        <th>$ / 1k queries</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>BGE-base only</td><td>0.71</td><td>110 ms</td><td>≈ $0.04</td></tr>
+      <tr><td>BGE-large only</td><td>0.78</td><td>240 ms</td><td>≈ $0.11</td></tr>
+      <tr><td><strong>BGE-base + cross-encoder rerank top-20</strong></td><td><strong>0.86</strong></td><td>190 ms</td><td>≈ $0.06</td></tr>
+    </tbody>
+  </table>
+</div>
+
+The two-stage setup beats the larger single-stage embedder on recall, runs faster, and costs less. The reason is structural:
+a bi-encoder has to compress query and document into the same vector space *independently*, so it loses the cross-attention
+signal between them. A cross-encoder reads both at once and scores their interaction directly. On the small candidate set
+the reranker sees, this is a much better use of compute than spending it on more embedding parameters.
+
+<Callout title="The takeaway:">
+if your retrieval bottleneck is *ranking the right answer at the top* rather than *finding it in the corpus at all*,
+a small reranker will outperform a bigger embedder almost every time.
+</Callout>
+
+## What the cross-encoder buys you in practice
+
+The clearest place this shows up is on questions where multiple chunks are *about* the right topic but only one actually
+contains the answer. The bi-encoder retrieves all the topical neighbors and ranks them by cosine similarity, which is
+roughly "how often do these two pieces of text co-occur in similar contexts." That's the wrong signal for QA.
+
+Consider a query like *"what was the FDA classification of the device?"* against a corpus of medical documentation.
+The bi-encoder will return every chunk that mentions "FDA" and "device" — some have the actual classification, some discuss
+classification *in general*, some are background. The cross-encoder reads the chunk with the query attached and asks a much
+sharper question: "does this passage *answer* the query?" That distinction — relevance vs answer-bearing — is what moved
+the LLM-judge faithfulness number for me.
+
+## Where the latency goes
+
+The cross-encoder pass adds ~80ms over the embedder-only baseline on a 4-vCPU box. That breakdown:
+
+- **~30ms** — embed query (BGE-base, ONNX runtime, CPU)
+- **~10ms** — FAISS top-20 ANN lookup
+- **~80ms** — score 20 (query, chunk) pairs through MiniLM-L-6 cross-encoder, batched
+- **~70ms** — LLM time-to-first-token (Cloud Run + provider RTT)
+
+P50 ends at ~190ms before the answer starts streaming. P99 climbs to ~400ms when the candidate chunks are long
+(cross-encoder cost scales with token count, not just pair count). On GPU the rerank step drops to ~15ms,
+but for this scale the CPU box is right-sized.
+
+## The cache that made it cheap
+
+Two-stage retrieval is more expensive than single-stage, full stop. What made it cheap enough to run in production is a
+**SHA-256 exact-match cache**: hash the normalized query, look up the answer + sources + metrics in DynamoDB, return on hit.
+About 30% of queries on the live demo hit cache (recruiters tend to ask similar things — surprise), and cache hits skip
+both retrieval stages and the LLM call entirely.
+
+Critically: the cache key is *normalized query*, not embedding. I tried embedding-space cache lookup (cosine threshold
+over a small Faiss of past queries). It produced subtle wrong answers when two semantically-near queries had different
+correct answers — "what was the throughput improvement" vs "what was the latency improvement" hash differently but embed
+nearly identically. Exact-match caching is boring and correct.
+
+## Eval — the part most portfolios skip
+
+None of the above is meaningful without an eval that catches regressions. ProfessionalRAG has a 50-question
+golden set spanning the corpus, with two scorers:
+
+1. **Retrieval recall@k** — does the top-k include the chunk a human marked as containing the answer?
+2. **LLM-as-judge faithfulness** — given (question, retrieved context, generated answer), does the answer use only the context?
+
+Recall@k is cheap and noise-free; it's the first thing that breaks when retrieval regresses. The judge scorer is the
+second line of defense — it catches generation-side hallucinations even when retrieval is fine. Both run on every PR
+via a GitHub Action; a regression of more than 2 points on either blocks merge.
+
+## What I'd do differently
+
+- **Use a hybrid retriever (BM25 + dense) for stage 1.** I went pure-dense for simplicity, but BM25 wins on exact-token
+  queries (acronyms, error codes, names) where dense embeddings smear the signal. The cross-encoder partially compensates,
+  but giving it better candidates is cheaper than asking it to fix bad ones.
+- **Move chunking to semantic boundaries instead of fixed window.** Fixed-size chunking is fast to ship and fights you
+  forever after. A sentence-window or proposition-level chunker would have raised recall@5 by another few points without
+  touching the model stack.
+- **Add a "no answer" branch.** The LLM still tries to answer when the cross-encoder returns nothing above threshold.
+  A short-circuit ("I don't have that in the corpus") would avoid the small number of hallucinations that survive eval.
+
+## Why it matters that this is small
+
+The whole system runs in a single Cloud Run container. No vector DB service, no orchestration framework, no LangChain,
+no agent loop. The retrieval and rerank models are CPU-quantized ONNX. The pipeline is ~600 lines of Python.
+
+That's deliberate. Most of what makes a RAG system *good* isn't the framework choice — it's the eval discipline,
+the cache strategy, the retrieval architecture, and the willingness to measure before scaling parameters. Frameworks
+obscure those decisions. Writing the orchestration myself meant I had to make every one of them on purpose, which is
+also what made this post possible.
+
+---
+
+Source: [github.com/Vikhyat-Chauhan/ProfessionalRAG](https://github.com/Vikhyat-Chauhan/ProfessionalRAG) ·
+Live demo: the chat bubble on the home page is hitting this exact pipeline.

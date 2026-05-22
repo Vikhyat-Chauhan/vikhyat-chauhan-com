@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Legacy /writing → /blog redirect (preserves old links to individual posts).
+[[redirects]]
+  from = "/writing/*"
+  to = "/blog/:splat"
+  status = 301

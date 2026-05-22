@@ -1,0 +1,192 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  date?: string;
+  readingTime?: string;
+}
+
+const { title, subtitle, date, readingTime } = Astro.props;
+---
+
+<Layout title={`${title} — Vikhyat Chauhan`}>
+  <header class="sticky top-0 z-50 border-b border-zinc-200/70 bg-gradient-to-r from-orange-50/80 via-sky-50/70 via-50% to-violet-50/80 backdrop-blur">
+    <nav class="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+      <a href="/" class="text-sm font-semibold tracking-tight text-zinc-900 hover:text-black">
+        ← Vikhyat Chauhan
+      </a>
+      <div class="hidden gap-7 text-sm text-zinc-600 sm:flex">
+        <a href="/#projects" class="transition hover:text-zinc-900">Projects</a>
+        <a href="/#experience" class="transition hover:text-zinc-900">Experience</a>
+        <a href="/blog" class="transition hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="transition hover:text-zinc-900">Personal</a>
+        <a href="/#contact" class="transition hover:text-zinc-900">Contact</a>
+      </div>
+      <button
+        id="mobile-nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900 sm:hidden"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+    </nav>
+    <div id="mobile-nav" class="hidden border-t border-zinc-200/70 sm:hidden">
+      <div class="mx-auto grid max-w-3xl gap-1 px-4 py-3 text-sm text-zinc-700">
+        <a href="/#experience" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Experience</a>
+        <a href="/#projects" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Projects</a>
+        <a href="/blog" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Blog</a>
+        <a href="/personal" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Personal</a>
+        <a href="/#contact" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    (() => {
+      const btn = document.getElementById('mobile-nav-toggle');
+      const menu = document.getElementById('mobile-nav');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', () => {
+        const hidden = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!hidden));
+      });
+    })();
+  </script>
+
+  <main class="mx-auto max-w-3xl px-4 sm:px-6">
+    <article class="pt-10 pb-20 sm:pt-20 sm:pb-24">
+      <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.16em] text-orange-700">
+        {date && <span>{date}</span>}
+        {date && readingTime && <span class="text-zinc-300">·</span>}
+        {readingTime && <span class="text-zinc-500">{readingTime}</span>}
+      </div>
+      <h1 class="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">{title}</h1>
+      {subtitle && (
+        <p class="mt-3 text-lg leading-relaxed text-zinc-600">{subtitle}</p>
+      )}
+
+      <div class="post mt-12 text-[16px] leading-[1.75] text-zinc-800">
+        <slot />
+      </div>
+
+      <div class="mt-16 border-t border-zinc-200 pt-8 text-sm text-zinc-600">
+        <a href="/blog" class="font-medium text-zinc-700 underline-offset-4 hover:text-zinc-900 hover:underline">
+          ← Back to blog
+        </a>
+      </div>
+    </article>
+
+    <footer class="border-t border-zinc-200 py-8 text-xs text-zinc-500">
+      <div class="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+        <div>© {new Date().getFullYear()} Vikhyat Chauhan</div>
+        <div class="font-mono">Astro · Tailwind · Netlify</div>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  .post h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #18181b;
+  }
+  .post h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #18181b;
+  }
+  .post p { margin: 1rem 0; }
+  .post ul, .post ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    list-style: revert;
+  }
+  .post ul { list-style-type: disc; }
+  .post ol { list-style-type: decimal; }
+  .post li + li { margin-top: 0.4rem; }
+  .post strong { font-weight: 600; color: #18181b; }
+  .post em { font-style: italic; }
+  .post a { color: #c2410c; text-decoration: underline; text-underline-offset: 3px; }
+  .post a:hover { color: #9a3412; }
+  .post code {
+    background: rgba(24, 24, 27, 0.06);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    color: #18181b;
+  }
+  .post pre {
+    margin: 1.5rem 0;
+    background: #18181b;
+    color: #fafafa;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.65;
+  }
+  .post pre code {
+    background: transparent; padding: 0; color: inherit;
+  }
+  .post blockquote {
+    margin: 1.5rem 0;
+    border-left: 3px solid #c2410c;
+    padding: 0.1rem 0 0.1rem 1rem;
+    color: #3f3f46;
+    font-style: italic;
+  }
+  .post hr {
+    margin: 2.5rem 0;
+    border: 0;
+    border-top: 1px solid #e4e4e7;
+  }
+  .post .callout {
+    margin: 1.5rem 0;
+    padding: 0.9rem 1.1rem;
+    background: #fff7ed;
+    border-left: 3px solid #c2410c;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+  .post .table-wrap {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+  }
+  .post table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92em;
+  }
+  .post th, .post td {
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid #e4e4e7;
+  }
+  .post th {
+    background: #fafaf9;
+    font-weight: 600;
+    color: #18181b;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .post tr:last-child td { border-bottom: 0; }
+</style>

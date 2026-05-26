@@ -28,7 +28,10 @@ const fmt = (d: Date) =>
   new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 ---
 
-<Layout title={`#${label} — Personal`}>
+<Layout
+  title={`#${label} — Personal`}
+  description={`Personal notes tagged #${label} by Vikhyat Chauhan.`}
+>
   <header class="sticky top-0 z-50 border-b border-zinc-200/70 bg-gradient-to-r from-orange-50/80 via-sky-50/70 via-50% to-violet-50/80 backdrop-blur">
     <nav class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
       <a href="/personal" class="text-sm font-semibold tracking-tight text-zinc-900 hover:text-black">

@@ -5,12 +5,21 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  keywords?: string;
+  /** Optional JSON-LD object emitted in <head> (e.g. BlogPosting for articles). */
+  schema?: Record<string, unknown>;
 }
 
 const {
   title = 'Vikhyat Chauhan — LLM & RAG Infrastructure Engineer',
   description = 'LLM & RAG infrastructure engineer building production retrieval, TensorRT inference, and MLOps systems. M.S. Computer Engineering, Virginia Tech. ex-GE HealthCare.',
   ogImage = '/og-image.png',
+  ogType = 'website',
+  publishedTime,
+  keywords,
+  schema,
 } = Astro.props;
 
 const siteUrl = Astro.site ?? new URL('https://vikhyatchauhan.com');
@@ -64,6 +73,8 @@ const personSchema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
+    <meta name="author" content="Vikhyat Chauhan" />
     <meta name="theme-color" content="#fafaf9" id="theme-color-meta" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -89,7 +100,11 @@ const personSchema = {
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    {ogType === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {ogType === 'article' && <meta property="article:author" content="Vikhyat Chauhan" />}
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
@@ -106,6 +121,9 @@ const personSchema = {
 
     {isHome && (
       <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    )}
+    {schema && (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     )}
 
     <style is:global>

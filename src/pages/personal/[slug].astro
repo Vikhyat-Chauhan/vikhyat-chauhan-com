@@ -19,12 +19,20 @@ const dateLabel = new Date(date).toLocaleDateString('en-US', {
   month: 'short',
   day: 'numeric',
 });
+const isoDate = new Date(date).toISOString().slice(0, 10);
 
 const subtitle = [blurb, tags.length ? tags.map((t) => `#${t}`).join('  ') : null]
   .filter(Boolean)
   .join('  ·  ');
 ---
 
-<LongPost title={title} subtitle={subtitle} date={dateLabel}>
+<LongPost
+  title={title}
+  subtitle={subtitle}
+  date={dateLabel}
+  description={blurb}
+  publishedTime={isoDate}
+  keywords={tags.length ? tags.join(', ') : undefined}
+>
   <Content />
 </LongPost>

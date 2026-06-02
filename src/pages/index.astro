@@ -36,19 +36,34 @@ const projects = [
     deepDive: '/projects/professional-rag',
   },
   {
-    title: 'Multi-Agent LLM for Simulation Synthesis',
-    context: 'Virginia Tech · NSF-funded',
+    title: 'Web Automation Agent',
+    context: 'Personal · Local inference',
     tagClass: 'text-violet-700',
     blurb:
-      'LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, automating authoring of 100+ ROS 2 / Gazebo environments with stateful task graphs.',
-    stack: ['LangGraph', 'Llama 3', 'ROS 2', 'Gazebo', 'Python'],
+      'Multi-step agentic browser automation using LangGraph orchestration and Browser Use for DOM interaction, powered by a locally-quantized Qwen model on an RTX 5060 Ti — no cloud API dependency. Stateful task graphs with retry logic, conditional branching, and multi-page form-filling.',
+    stack: ['LangGraph', 'Browser Use', 'Qwen', 'Python', 'Local LLM'],
     metrics: [
-      { label: 'Manual work', value: '−40 hrs/wk' },
-      { label: 'Envs', value: '100+' },
-      { label: 'Inference', value: 'Local' },
+      { label: 'Task time', value: '~60s' },
+      { label: 'First token', value: '<300ms' },
+      { label: 'Cloud APIs', value: '0' },
     ],
     repo: 'https://github.com/Vikhyat-Chauhan',
     repoLabel: 'GitHub profile (source private)',
+  },
+  {
+    title: 'CANavigator — Brain-Inspired Drone Navigation Framework',
+    context: 'Virginia Tech · M.S. Thesis',
+    tagClass: 'text-violet-700',
+    blurb:
+      'Conflict-resolution framework on a MISD architecture for 3D autonomous UAV navigation. Validated across three real-world-mapped simulation environments with statistically significant gains.',
+    stack: ['Python', 'MISD', 'Control Systems', 'Simulation'],
+    metrics: [
+      { label: 'Energy', value: '−34.5%' },
+      { label: 'Time', value: '−34.6%' },
+      { label: 'Significance', value: 'p < 0.0001' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/CANavigator',
+    repoLabel: 'View source',
   },
   {
     title: 'Physiological Stress Classifier',
@@ -80,32 +95,17 @@ const projects = [
     repo: 'https://github.com/Vikhyat-Chauhan',
     repoLabel: 'GitHub profile (source private)',
   },
-  {
-    title: 'CANavigator — Brain-Inspired Drone Navigation Framework',
-    context: 'Virginia Tech · M.S. Thesis',
-    tagClass: 'text-violet-700',
-    blurb:
-      'Conflict-resolution framework on a MISD architecture for 3D autonomous UAV navigation. Validated across three real-world-mapped simulation environments with statistically significant gains.',
-    stack: ['Python', 'MISD', 'Control Systems', 'Simulation'],
-    metrics: [
-      { label: 'Energy', value: '−34.5%' },
-      { label: 'Time', value: '−34.6%' },
-      { label: 'Significance', value: 'p < 0.0001' },
-    ],
-    repo: 'https://github.com/Vikhyat-Chauhan/CANavigator',
-    repoLabel: 'View source',
-  },
 ];
 
 const experience = [
   {
     company: 'Virginia Tech',
     role: 'Graduate AI/ML Researcher',
-    period: '2024 — Present',
+    period: '2024 — 2026',
     location: 'Blacksburg, VA',
     bullets: [
-      'Designed and experimentally validated a brain-inspired UAV navigation system achieving 34.6% reduction in compute energy and elapsed time over baseline (p < 0.0001, n=1,000 runs, 3 real-world-mapped environments) - NSF-funded.',
-      'Architected a LangGraph + Llama 3 multi-agent system for grammar-constrained SDF XML generation, automating 100+ simulation environments and eliminating 40 hours/week of manual authoring.',
+      'Designed and validated the Conflict Architecture (CA) framework for brain-inspired UAV navigation (NSF #2204780), achieving a simultaneous 34.6% reduction in compute energy and elapsed time via parallel conflict resolution (p < 0.0001, n=1,000 runs).',
+      'Independent project (personal extension of thesis infrastructure): architected a LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, enabling procedural authoring of 100+ simulation environments — applicable to simulation and game-world tooling.',
     ],
   },
   {
@@ -122,14 +122,14 @@ const experience = [
     ],
   },
   {
-    company: 'TNM Electronics',
-    role: 'Software Engineer I',
+    company: 'The Next Move Electronics (TNM)',
+    role: 'Co-Founder & Sole Technical Lead',
     period: '2020 — 2022',
-    location: 'Delhi NCR, IN',
+    location: 'Delhi, IN',
     bullets: [
-      'Owned the full platform from day one; architected an AWS-backed microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT broker), scaling from 0 to 1000+ devices while sustaining 99.9% uptime.',
-      'Co-invented and patented a master-slave microcontroller communication system for home automation, cutting final product BOM cost 80% and directly enabling first design-win customers.',
-      'Reduced field bug reports 98% vs. prior manual integration method by designing a structured hardware-software validation workflow as the company’s sole engineer.'
+      'Founded and bootstrapped (~$10K self-funded) a home-automation hardware startup, owning every layer from PCB design and firmware to cloud backend and a Flutter/Alexa mobile app; shipped to 100+ homes before COVID supply-chain disruption ended the venture.',
+      'Co-invented and patented a master-slave microcontroller communication protocol enabling single-chip control of multiple devices — cutting final-product BOM cost 80% and directly enabling first design-win customers.',
+      'Architected an AWS-backed microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT broker), scaling from 0 to 1000+ devices at 99.9% uptime, and cutting field bug reports 98% via a structured hardware-software validation workflow built as the sole engineer.'
     ],
   },
   {
@@ -152,7 +152,6 @@ const education = [
     bullets: [
       'Defended M.S. Thesis on Brain-Inspired Drone Navigation System using Conflict Architecture — 4.0 GPA.',
       'Coursework: CS5424 Advanced Machine Learning, CS5465 Applications of Machine Learning, ECE5504 Computer Architecture.',
-      'Honors: Phi Kappa Phi (top 10% of Master’s graduates) and Omicron Delta Kappa National Leadership Honor Society, Virginia Tech, 2026.',
     ],
   },
   {
@@ -163,6 +162,45 @@ const education = [
     bullets: [
       'Graduated with First Division.',
     ],
+  },
+];
+
+const publications = [
+  {
+    title: 'Brain-Inspired Drone Navigation Using the Conflict Architecture',
+    venue: 'M.S. Thesis · Virginia Tech',
+    year: '2026',
+    authors: 'V. Chauhan',
+  },
+  {
+    title: 'Multi-Agent Stock Prediction Systems: Machine Learning Models, Simulations, and Real-Time Trading Strategies',
+    venue: 'arXiv:2502.15853',
+    year: '2025',
+    authors: 'D. Dave, G. Sawhney, V. Chauhan',
+    href: 'https://arxiv.org/abs/2502.15853',
+  },
+];
+
+const awards = [
+  {
+    title: 'Patent Co-Inventor (Granted)',
+    detail: 'Master-Slave Microcontroller Communication System for Home Automation, The Next Move Electronics — Patent No. 202111060973.',
+  },
+  {
+    title: 'GE Impact Award',
+    detail: 'Recognized for independently modernizing a critical legacy MR imaging application to production microservices, directly improving clinical software delivery at scale.',
+  },
+  {
+    title: 'NSF-Funded Graduate Research Assistant',
+    detail: 'Supported on NSF Award #2204780 (CCF: Small: Paradox and Brain-inspired Computer Architecture, PI: JoAnn M. Paul); contributed to thesis research on brain-inspired autonomous systems.',
+  },
+  {
+    title: 'Honor Society of Phi Kappa Phi',
+    detail: 'Inducted, Virginia Tech Chapter (2026); top 10% of Master’s graduate students across all disciplines.',
+  },
+  {
+    title: 'Omicron Delta Kappa National Leadership Honor Society',
+    detail: 'Selected for membership, Alpha Omicron Circle, Virginia Tech (2026 Cohort); recognizes achievement in academics, research, and service.',
   },
 ];
 
@@ -181,6 +219,8 @@ const education = [
         <a href="/blog" class="transition hover:text-zinc-900">Blog</a>
         <a href="/personal" class="transition hover:text-zinc-900">Personal</a>
         <a href="#education" class="transition hover:text-zinc-900">Education</a>
+        <a href="#publications" class="transition hover:text-zinc-900">Publications</a>
+        <a href="#awards" class="transition hover:text-zinc-900">Awards</a>
         <a href="#contact" class="transition hover:text-zinc-900">Contact</a>
       </div>
       <div class="flex items-center gap-2">
@@ -214,6 +254,8 @@ const education = [
         <a href="/blog" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Blog</a>
         <a href="/personal" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Personal</a>
         <a href="#education" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Education</a>
+        <a href="#publications" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Publications</a>
+        <a href="#awards" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Awards</a>
         <a href="#contact" class="rounded px-2 py-2 transition hover:bg-white/60 hover:text-zinc-900">Contact</a>
       </div>
     </div>
@@ -263,19 +305,23 @@ const education = [
       <h1 data-animate style="--delay: 80ms" class="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
         Vikhyat Chauhan
       </h1>
-      <p data-animate style="--delay: 160ms" class="mt-2 text-lg text-zinc-600 sm:text-xl">
-        Hi, I'm Vikhyat — an LLM &amp; RAG infrastructure engineer who likes shipping AI that has to actually work on real hardware, for real people.
+      <p data-animate style="--delay: 160ms" class="mt-3 text-lg font-medium text-zinc-700 sm:text-xl">
+        Production AI engineer. I take the hardest AI/ML bottleneck from prototype to production —
+        <span class="text-zinc-900">quantified, compliant, shipped.</span>
       </p>
 
-      <p data-animate style="--delay: 240ms" class="mt-8 max-w-2xl text-[15px] leading-relaxed text-zinc-700">
-        I spent two years at <span class="font-medium text-zinc-900">GE HealthCare</span> getting FDA-regulated MRI
-        models onto Kubernetes — the kind of work where a missed edge case shows up in an operating room, so you
-        learn to care a lot about latency, reproducibility, and the boring parts of MLOps. These days I'm finishing
-        my M.S. in Computer Engineering at <span class="font-medium text-zinc-900">Virginia Tech</span> (GPA 4.0),
-        researching brain-inspired autonomous systems and building RAG pipelines from scratch — no LangChain,
-        just the parts I actually need. Outside of work I'm usually tinkering with multi-agent setups, reading
-        neuroscience papers I'm only half-qualified for, or chasing whatever rabbit hole the latest paper sends me down.
+      <p data-animate style="--delay: 240ms" class="mt-6 max-w-2xl text-[15px] leading-relaxed text-zinc-700">
+        Two years at <span class="font-medium text-zinc-900">GE HealthCare</span> putting FDA-regulated MRI models
+        into production on Kubernetes, then an M.S. at <span class="font-medium text-zinc-900">Virginia Tech</span>
+        defending a thesis on brain-inspired autonomous navigation. I build the unglamorous parts well —
+        TensorRT inference, agentic systems, RAG from scratch — so they hold up in the real world.
       </p>
+
+      <div data-animate style="--delay: 300ms" class="mt-6 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
+        <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-700">ex-GE HealthCare</span>
+        <span class="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-violet-700">M.S. Virginia Tech · 4.0 GPA</span>
+        <span class="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-orange-700">NSF-funded research</span>
+      </div>
 
       <div data-animate style="--delay: 320ms" class="mt-8 flex flex-wrap items-center gap-3 text-sm">
         <a
@@ -326,7 +372,7 @@ const education = [
       <aside class="lg:sticky lg:top-24 lg:self-start">
         <SectionHeader title="Experience" subtitle="Full details in résumé." />
         <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-sky-700 lg:block">
-          {experience.length} roles · 2018 — present
+          {experience.length} roles · 2018 — 2026
         </div>
       </aside>
 
@@ -482,6 +528,57 @@ const education = [
       </div>
     </section>
 
+    <!-- PUBLICATIONS -->
+    <section id="publications" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Publications" subtitle="Thesis and peer work." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-sky-700 lg:block">
+          {publications.length} entries
+        </div>
+      </aside>
+
+      <div class="mt-10 space-y-8 lg:mt-0">
+        {publications.map((p, i) => (
+          <div data-animate style={`--delay: ${i * 60}ms`} class="grid gap-2 sm:grid-cols-[140px_1fr] sm:gap-8">
+            <div class="font-mono text-xs text-zinc-500 sm:pt-1">{p.year}</div>
+            <div>
+              <h3 class="text-base font-medium leading-snug text-zinc-900">
+                {p.href ? (
+                  <a href={p.href} target="_blank" rel="noopener" class="underline-offset-4 transition hover:text-orange-700 hover:underline">{p.title}</a>
+                ) : (
+                  p.title
+                )}
+              </h3>
+              <p class="mt-1 text-sm text-zinc-600">{p.authors}</p>
+              <p class="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-zinc-500">{p.venue}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- AWARDS -->
+    <section id="awards" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <SectionHeader title="Awards" subtitle="Recognition and honors." />
+        <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-orange-700 lg:block">
+          {awards.length} entries
+        </div>
+      </aside>
+
+      <div class="mt-10 space-y-6 lg:mt-0">
+        {awards.map((a, i) => (
+          <div data-animate style={`--delay: ${i * 60}ms`} class="flex gap-3">
+            <span class="mt-2.5 inline-block h-px w-3 flex-shrink-0 bg-zinc-300"></span>
+            <div>
+              <h3 class="text-base font-semibold text-zinc-900">{a.title}</h3>
+              <p class="mt-1 text-[15px] leading-relaxed text-zinc-600">{a.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contact" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
       <aside class="lg:sticky lg:top-24 lg:self-start">
@@ -493,8 +590,8 @@ const education = [
 
       <div data-animate class="mt-8 grid gap-8 sm:grid-cols-2 lg:mt-0">
         <p class="max-w-md text-[15px] leading-relaxed text-zinc-700">
-          I'm focused on <span class="font-medium text-zinc-900">LLM &amp; RAG infrastructure</span> roles —
-          production retrieval systems, eval pipelines, and inference cost / latency optimization.
+          I'm focused on <span class="font-medium text-zinc-900">production AI / ML engineering</span> roles —
+          inference optimization, agentic systems, and RAG pipelines that have to actually ship.
           Background in FDA-regulated medical AI is a bonus for clinical-grade deploys.
           US-authorized, no sponsorship needed, open to relocation.
         </p>

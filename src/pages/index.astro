@@ -179,13 +179,15 @@ const publications = [
     authors: 'D. Dave, G. Sawhney, V. Chauhan',
     href: 'https://arxiv.org/abs/2502.15853',
   },
+  {
+    title: 'Master-Slave Microcontroller Communication System for Home Automation',
+    venue: 'Granted Patent · Patent No. 202111060973',
+    year: '2021',
+    authors: 'V. Chauhan (co-inventor), The Next Move Electronics',
+  },
 ];
 
 const awards = [
-  {
-    title: 'Patent Co-Inventor (Granted)',
-    detail: 'Master-Slave Microcontroller Communication System for Home Automation, The Next Move Electronics — Patent No. 202111060973.',
-  },
   {
     title: 'GE Impact Award',
     detail: 'Recognized for independently modernizing a critical legacy MR imaging application to production microservices, directly improving clinical software delivery at scale.',
@@ -208,26 +210,46 @@ const awards = [
 
 <Layout>
   <!-- Nav -->
-  <header class="sticky top-0 z-50 border-b border-zinc-200/70 bg-gradient-to-r from-orange-50/80 via-sky-50/70 via-50% to-violet-50/80 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b border-zinc-200/70 glass-header">
     <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
       <a href="#top" class="text-sm font-semibold tracking-tight text-zinc-900 hover:text-black">
         Vikhyat Chauhan
       </a>
-      <div class="hidden gap-7 text-sm text-zinc-600 sm:flex">
+      <div class="hidden items-center gap-7 text-sm text-zinc-600 sm:flex">
         <a href="#experience" class="transition hover:text-zinc-900">Experience</a>
         <a href="#projects" class="transition hover:text-zinc-900">Projects</a>
         <a href="/blog" class="transition hover:text-zinc-900">Blog</a>
         <a href="/personal" class="transition hover:text-zinc-900">Personal</a>
-        <a href="#education" class="transition hover:text-zinc-900">Education</a>
-        <a href="#publications" class="transition hover:text-zinc-900">Publications</a>
-        <a href="#awards" class="transition hover:text-zinc-900">Awards</a>
-        <a href="#contact" class="transition hover:text-zinc-900">Contact</a>
+        <div class="relative">
+          <button
+            id="more-toggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="more-menu"
+            class="inline-flex items-center gap-1 transition hover:text-zinc-900"
+          >
+            More
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div
+            id="more-menu"
+            class="glass absolute right-0 mt-2 hidden w-44 rounded-md py-1"
+          >
+            <a href="#education" class="block px-3 py-2 transition hover:bg-zinc-50 hover:text-zinc-900 dark:hover:bg-zinc-800">Education</a>
+            <a href="#publications" class="block px-3 py-2 transition hover:bg-zinc-50 hover:text-zinc-900 dark:hover:bg-zinc-800">Publications</a>
+            <a href="#awards" class="block px-3 py-2 transition hover:bg-zinc-50 hover:text-zinc-900 dark:hover:bg-zinc-800">Awards</a>
+            <a href="#contact" class="block px-3 py-2 transition hover:bg-zinc-50 hover:text-zinc-900 dark:hover:bg-zinc-800">Contact</a>
+          </div>
+        </div>
       </div>
       <div class="flex items-center gap-2">
         <a
           href={resumePdf}
           download="Vikhyat-Chauhan-Resume.pdf"
-          class="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900"
+          class="glass-pill rounded-md px-3 py-1.5 text-xs font-medium text-zinc-700 transition hover:text-zinc-900"
         >
           Résumé
         </a>
@@ -237,7 +259,7 @@ const awards = [
           aria-label="Open menu"
           aria-controls="mobile-nav"
           aria-expanded="false"
-          class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900 sm:hidden"
+          class="glass-pill inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-700 transition hover:text-zinc-900 sm:hidden"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="6" x2="21" y2="6" />
@@ -276,6 +298,28 @@ const awards = [
       });
       menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
     })();
+
+    (() => {
+      const btn = document.getElementById('more-toggle');
+      const menu = document.getElementById('more-menu');
+      if (!btn || !menu) return;
+      const close = () => {
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      };
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!open));
+      });
+      menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+      document.addEventListener('click', (e) => {
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+    })();
   </script>
 
   <main id="top" class="mx-auto max-w-6xl px-4 sm:px-6">
@@ -297,6 +341,10 @@ const awards = [
           <img
             src="/vikhyat-hero.jpeg"
             alt="Vikhyat Chauhan"
+            width="352"
+            height="448"
+            fetchpriority="high"
+            decoding="async"
             class="hero-card__img h-64 w-52 sm:h-80 sm:w-64"
           />
         </div>
@@ -305,9 +353,9 @@ const awards = [
       <h1 data-animate style="--delay: 80ms" class="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
         Vikhyat Chauhan
       </h1>
-      <p data-animate style="--delay: 160ms" class="mt-3 text-lg font-medium text-zinc-700 sm:text-xl">
+      <p data-animate style="--delay: 160ms" class="mt-3 text-xl font-medium leading-snug text-zinc-700 sm:text-2xl">
         Production AI engineer. I take the hardest AI/ML bottleneck from prototype to production —
-        <span class="text-zinc-900">quantified, compliant, shipped.</span>
+        <span class="font-semibold text-zinc-900">quantified, compliant, shipped.</span>
       </p>
 
       <p data-animate style="--delay: 240ms" class="mt-6 max-w-2xl text-[15px] leading-relaxed text-zinc-700">
@@ -318,9 +366,9 @@ const awards = [
       </p>
 
       <div data-animate style="--delay: 300ms" class="mt-6 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
-        <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-700">ex-GE HealthCare</span>
-        <span class="rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-violet-700">M.S. Virginia Tech · 4.0 GPA</span>
-        <span class="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-orange-700">NSF-funded research</span>
+        <span class="rounded-full border border-sky-200/60 bg-sky-50/55 px-3 py-1 text-sky-700 backdrop-blur-sm dark:border-sky-400/30 dark:bg-sky-900/40">ex-GE HealthCare</span>
+        <span class="rounded-full border border-violet-200/60 bg-violet-50/55 px-3 py-1 text-violet-700 backdrop-blur-sm dark:border-violet-400/30 dark:bg-violet-900/40">M.S. Virginia Tech · 4.0 GPA</span>
+        <span class="rounded-full border border-orange-200/60 bg-orange-50/55 px-3 py-1 text-orange-700 backdrop-blur-sm dark:border-orange-400/30 dark:bg-orange-900/40">NSF-funded research</span>
       </div>
 
       <div data-animate style="--delay: 320ms" class="mt-8 flex flex-wrap items-center gap-3 text-sm">
@@ -334,20 +382,20 @@ const awards = [
         <a
           href="https://github.com/Vikhyat-Chauhan"
           target="_blank" rel="noopener"
-          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+          class="glass-pill rounded-md px-4 py-2 font-medium text-zinc-800 transition hover:text-zinc-900"
         >
           GitHub
         </a>
         <a
           href="https://www.linkedin.com/in/vikhyat-chauhan/"
           target="_blank" rel="noopener"
-          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+          class="glass-pill rounded-md px-4 py-2 font-medium text-zinc-800 transition hover:text-zinc-900"
         >
           LinkedIn
         </a>
         <a
           href="mailto:vikhyat.chauhan@gmail.com"
-          class="rounded-md border border-zinc-300 bg-white px-4 py-2 font-medium text-zinc-800 transition hover:border-zinc-400 hover:text-zinc-900"
+          class="glass-pill rounded-md px-4 py-2 font-medium text-zinc-800 transition hover:text-zinc-900"
         >
           Email
         </a>
@@ -361,6 +409,10 @@ const awards = [
           <img
             src="/vikhyat-hero.jpeg"
             alt="Vikhyat Chauhan"
+            width="352"
+            height="448"
+            fetchpriority="high"
+            decoding="async"
             class="hero-card__img lg:h-[28rem] lg:w-[22rem]"
           />
         </div>
@@ -406,7 +458,7 @@ const awards = [
       <aside class="lg:sticky lg:top-24 lg:self-start">
         <SectionHeader title="Projects" subtitle="Selected production and research work." />
         <div class="mt-3 hidden font-mono text-[11px] uppercase tracking-wider text-orange-700 lg:block">
-          {projects.length} MOST RECENT 
+          {projects.length} selected · production & research
         </div>
       </aside>
 
@@ -595,7 +647,7 @@ const awards = [
           Background in FDA-regulated medical AI is a bonus for clinical-grade deploys.
           US-authorized, no sponsorship needed, open to relocation.
         </p>
-        <div class="space-y-2 text-sm">
+        <div class="glass space-y-2 rounded-2xl p-5 text-sm">
           <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-zinc-200 pb-2">
             <span class="text-zinc-500">Email</span>
             <a href="mailto:vikhyat.chauhan@gmail.com" class="break-all text-right text-zinc-900 hover:underline underline-offset-4">vikhyat.chauhan@gmail.com</a>
@@ -625,7 +677,7 @@ const awards = [
     <footer class="mt-4 border-t border-zinc-200 py-8 text-xs text-zinc-500">
       <div class="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
         <div>© {new Date().getFullYear()} Vikhyat Chauhan</div>
-        <div class="font-mono">Astro · Tailwind · Netlify · RAG: FastAPI + Cloud Run</div>
+        <div class="font-mono">Astro · Tailwind · Netlify · RAG: FastAPI + AWS EC2</div>
       </div>
     </footer>
   </main>

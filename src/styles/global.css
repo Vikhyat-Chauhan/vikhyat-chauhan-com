@@ -18,6 +18,84 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================================
+   Frosted "Apple glass" foundation
+   - Ambient cool-neutral backdrop behind all content (so the
+     glass surfaces have something to blur).
+   - Reusable .glass / .glass-strong / .glass-header / .glass-pill
+     surface classes, each with a .dark variant.
+   ============================================================ */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 12% -5%, rgba(186, 202, 224, 0.40), transparent 70%),
+    radial-gradient(55% 50% at 105% 15%, rgba(198, 206, 220, 0.32), transparent 70%),
+    linear-gradient(180deg, #f6f8fb 0%, #eceff4 100%);
+}
+.dark body::before {
+  background:
+    radial-gradient(60% 55% at 12% -5%, rgba(42, 54, 76, 0.55), transparent 70%),
+    radial-gradient(55% 50% at 105% 15%, rgba(28, 38, 58, 0.45), transparent 70%),
+    linear-gradient(180deg, #09090b 0%, #0c0e13 100%);
+}
+
+.glass {
+  background-color: rgb(255 255 255 / 0.6);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow:
+    0 1px 1px rgb(24 24 27 / 0.04),
+    0 10px 30px -10px rgb(24 24 27 / 0.18);
+}
+.glass-strong {
+  background-color: rgb(255 255 255 / 0.82);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow:
+    0 1px 1px rgb(24 24 27 / 0.04),
+    0 10px 30px -10px rgb(24 24 27 / 0.18);
+}
+.glass-header {
+  background-color: rgb(255 255 255 / 0.6);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.glass-pill {
+  background-color: rgb(255 255 255 / 0.55);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  border: 1px solid rgb(255 255 255 / 0.5);
+}
+
+.dark .glass {
+  background-color: rgb(24 24 27 / 0.55);
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.3),
+    0 10px 30px -10px rgb(0 0 0 / 0.5);
+}
+.dark .glass-strong {
+  background-color: rgb(24 24 27 / 0.8);
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.3),
+    0 10px 30px -10px rgb(0 0 0 / 0.5);
+}
+.dark .glass-header {
+  background-color: rgb(10 10 12 / 0.55);
+}
+.dark .glass-pill {
+  background-color: rgb(39 39 42 / 0.45);
+  border-color: rgb(255 255 255 / 0.08);
+}
+
 ::selection {
   background-color: oklch(0.78 0.16 75 / 0.3);
 }
@@ -114,16 +192,6 @@ html.dark body { color: #e4e4e7; }
 
 /* ---- Divide ---- */
 .dark .divide-zinc-200 > :not([hidden]) ~ :not([hidden]) { border-color: #27272a; }
-
-/* Header gradient — softer in dark, still gives the accent vibe */
-.dark header.sticky {
-  background-image: linear-gradient(
-    to right,
-    rgb(124 45 18 / 0.22),
-    rgb(7 89 133 / 0.18) 50%,
-    rgb(76 29 149 / 0.22)
-  );
-}
 
 /* Project card hover-lift */
 .dark .project-card:hover {

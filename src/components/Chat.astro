@@ -17,7 +17,7 @@ const connected = Boolean(import.meta.env.API_URL && import.meta.env.Professiona
     role="status"
     class="pointer-events-none hidden max-w-[260px] origin-bottom-right scale-95 opacity-0 transition-all duration-300 ease-out"
   >
-    <div class="pointer-events-auto relative rounded-2xl rounded-br-sm border border-zinc-200 bg-white px-4 py-3 shadow-xl shadow-zinc-900/10">
+    <div class="glass pointer-events-auto relative rounded-2xl rounded-br-sm px-4 py-3">
       <button
         id="chat-nudge-close"
         type="button"
@@ -36,7 +36,7 @@ const connected = Boolean(import.meta.env.API_URL && import.meta.env.Professiona
         </div>
       </div>
       <!-- Pointer tail -->
-      <span class="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 border-b border-r border-zinc-200 bg-white"></span>
+      <span class="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 border-b border-r border-white/55 bg-white/60 backdrop-blur dark:border-white/10 dark:bg-zinc-900/55"></span>
     </div>
   </div>
 
@@ -66,7 +66,7 @@ const connected = Boolean(import.meta.env.API_URL && import.meta.env.Professiona
   aria-modal="true"
   aria-labelledby="chat-title"
   data-connected={connected ? 'true' : 'false'}
-  class="fixed bottom-0 right-0 z-50 hidden h-[100dvh] w-full flex-col bg-white shadow-2xl shadow-zinc-900/10 sm:bottom-6 sm:right-6 sm:h-[640px] sm:max-h-[85vh] sm:w-[400px] sm:rounded-2xl sm:border sm:border-zinc-200"
+  class="glass-strong fixed bottom-0 right-0 z-50 hidden h-[100dvh] w-full flex-col sm:bottom-6 sm:right-6 sm:h-[640px] sm:max-h-[85vh] sm:w-[400px] sm:rounded-2xl"
 >
   <!-- Header -->
   <div class="flex items-center justify-between border-b border-zinc-200 px-5 py-4">

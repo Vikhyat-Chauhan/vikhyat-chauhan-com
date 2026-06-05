@@ -19,6 +19,22 @@ const writing = posts
   }));
 
 const projects = [
+  // ── V4 project #1: Agentic Coding Harness ──────────────────────────────────
+  // Placeholder slot, intentionally not rendered until the project is real.
+  // Drop in real values (no fabricated metrics/demo) and uncomment to feature it.
+  // {
+  //   title: 'Agentic Coding Harness',
+  //   context: 'Personal · Tooling',
+  //   tagClass: 'text-orange-700',
+  //   blurb: '',                       // 2-sentence description
+  //   stack: [],                       // tech tags
+  //   metrics: [                       // key metrics
+  //     { label: '', value: '' },
+  //   ],
+  //   repo: '',                        // GitHub URL
+  //   repoLabel: 'View source',
+  //   deepDive: '',                    // optional /projects/<slug>
+  // },
   {
     title: 'Professional RAG Pipeline',
     context: 'Personal · Production',
@@ -47,8 +63,8 @@ const projects = [
       { label: 'First token', value: '<300ms' },
       { label: 'Cloud APIs', value: '0' },
     ],
-    repo: 'https://github.com/Vikhyat-Chauhan',
-    repoLabel: 'GitHub profile (source private)',
+    repo: 'https://github.com/Vikhyat-Chauhan/ats-agent',
+    repoLabel: 'View source',
   },
   {
     title: 'CANavigator — Brain-Inspired Drone Navigation Framework',
@@ -65,36 +81,6 @@ const projects = [
     repo: 'https://github.com/Vikhyat-Chauhan/CANavigator',
     repoLabel: 'View source',
   },
-  {
-    title: 'Physiological Stress Classifier',
-    context: 'Virginia Tech · Personal',
-    tagClass: 'text-violet-700',
-    blurb:
-      'Developed a Conv1D Autoencoder-based multimodal pipeline on the WESAD dataset for unsupervised compression and three-class emotion classification of physiological signals (BVP, EDA, EMG, TEMP), achieving 83.5% accuracy across 15 subjects.',
-    stack: ['Python', 'PyTorch', 'scikit-learn', 'NumPy', 'Pandas'],
-    metrics: [
-      { label: 'Accuracy', value: '83.5%' },
-      { label: 'Subjects', value: '15' },
-      { label: 'Signals', value: '4-modal' },
-    ],
-    repo: 'https://github.com/Vikhyat-Chauhan/BioelectronicsAiWesad.git',
-    repoLabel: 'GitHub profile',
-  },
-  {
-    title: 'Medical Imaging Inference Pipeline',
-    context: 'GE HealthCare · Production',
-    tagClass: 'text-sky-700',
-    blurb:
-      'TensorRT-optimized Swin Transformer UNETR for FDA-regulated MRI. ONNX export, FP16 with selective FP32, custom CUDA plugins, and TensorRT layer fusion enabling real-time intraoperative use.',
-    stack: ['PyTorch', 'TensorRT', 'CUDA/C++', 'ONNX', 'Kubernetes', 'IEC 62304'],
-    metrics: [
-      { label: 'Throughput', value: '+20%' },
-      { label: 'Deploys', value: '+80% faster' },
-      { label: 'Defects', value: '−60%' },
-    ],
-    repo: 'https://github.com/Vikhyat-Chauhan',
-    repoLabel: 'GitHub profile (source private)',
-  },
 ];
 
 const experience = [
@@ -104,8 +90,8 @@ const experience = [
     period: '2024 — 2026',
     location: 'Blacksburg, VA',
     bullets: [
-      'Designed and validated the Conflict Architecture (CA) framework for brain-inspired UAV navigation (NSF #2204780), achieving a simultaneous 34.6% reduction in compute energy and elapsed time via parallel conflict resolution (p < 0.0001, n=1,000 runs).',
-      'Independent project (personal extension of thesis infrastructure): architected a LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, enabling procedural authoring of 100+ simulation environments — applicable to simulation and game-world tooling.',
+      'Architected a LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, enabling procedural authoring of 100+ simulation environments — stateful task graphs with retry logic and constrained decoding for reliable structured output.',
+      'Designed and experimentally validated the Conflict Architecture (CA) framework for brain-inspired UAV navigation (NSF #2204780, PI: J.M. Paul), achieving a simultaneous 34.6% reduction in compute energy and elapsed time over baseline (p < 0.0001, n=1,000 runs, 3 real-world-mapped environments).',
     ],
   },
   {
@@ -114,11 +100,9 @@ const experience = [
     period: '2022 — 2024',
     location: 'Bengaluru, IN',
     bullets: [
-      'Led the technical architecture migration from a legacy C++ monolith to Kubernetes-based Java/Spring Boot services, reducing MRI application runtime by 80%, by designing and implementing image normalization and segmentation algorithms in C++.',
-      'Profiled and optimized a Swin Transformer segmentation model end-to-end - ONNX export, FP16 precision tuning, custom CUDA/C++ plugin authoring for unsupported ops, and layer fusion via TensorRT builder API - achieving 20% throughput uplift on FDA-regulated hardware enabling real-time intraoperative use.',
-      'Developed a multimodal MRI report generation system (MedCLIP, PyTorch, TensorRT) fusing scan sequences with patient history, achieving quantifiable impact with a 6.5% improvement in diagnostic classification F1 over baselines.',
-      'Introduced automated quality gates and CI/CD pipelines (Jenkins, SonarQube) for production deployment and optimization, reducing release defects by 60% while maintaining 0 patient-safety regressions across 12 quarterly releases.',
-      'Recognized with the GE Impact Award for independently modernizing a critical legacy MR imaging application to production microservices, directly improving clinical software delivery at scale.'
+      'Led the architecture migration of a legacy C++ monolith to Kubernetes-based Java/Spring Boot microservices, cutting application runtime by 80% by designing and implementing image normalization and segmentation algorithms in C++.',
+      'Profiled and optimized a Swin Transformer model end-to-end — ONNX export, FP16 precision tuning, custom CUDA/C++ plugin authoring for unsupported ops, and layer fusion via the TensorRT builder API — for 20% throughput uplift on production hardware, enabling real-time inference.',
+      'Introduced automated quality gates and CI/CD pipelines (Jenkins, SonarQube), reducing release defects by 60% across 12 quarterly production releases.',
     ],
   },
   {
@@ -353,22 +337,27 @@ const awards = [
       <h1 data-animate style="--delay: 80ms" class="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
         Vikhyat Chauhan
       </h1>
+      <p data-animate style="--delay: 120ms" class="mt-2 font-mono text-sm uppercase tracking-wider text-sky-700">
+        AI/ML &amp; AI-Coding Engineer
+      </p>
       <p data-animate style="--delay: 160ms" class="mt-3 text-xl font-medium leading-snug text-zinc-700 sm:text-2xl">
-        Production AI engineer. I take the hardest AI/ML bottleneck from prototype to production —
-        <span class="font-semibold text-zinc-900">quantified, compliant, shipped.</span>
+        I build AI systems and the tooling around them —
+        <span class="font-semibold text-zinc-900">from agentic coding harnesses to production RAG.</span>
       </p>
 
       <p data-animate style="--delay: 240ms" class="mt-6 max-w-2xl text-[15px] leading-relaxed text-zinc-700">
-        Two years at <span class="font-medium text-zinc-900">GE HealthCare</span> putting FDA-regulated MRI models
-        into production on Kubernetes, then an M.S. at <span class="font-medium text-zinc-900">Virginia Tech</span>
-        defending a thesis on brain-inspired autonomous navigation. I build the unglamorous parts well —
-        TensorRT inference, agentic systems, RAG from scratch — so they hold up in the real world.
+        I work end-to-end on agentic and AI systems — <span class="font-medium text-zinc-900">LangGraph</span>
+        multi-agent pipelines, retrieval built from scratch, and local-LLM inference. Two years shipping
+        production software at <span class="font-medium text-zinc-900">GE HealthCare</span>, then an M.S. at
+        <span class="font-medium text-zinc-900">Virginia Tech</span> defending a thesis on brain-inspired
+        autonomous navigation. I build the unglamorous parts well, so they hold up in the real world.
       </p>
 
       <div data-animate style="--delay: 300ms" class="mt-6 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
         <span class="rounded-full border border-sky-200/60 bg-sky-50/55 px-3 py-1 text-sky-700 backdrop-blur-sm dark:border-sky-400/30 dark:bg-sky-900/40">ex-GE HealthCare</span>
         <span class="rounded-full border border-violet-200/60 bg-violet-50/55 px-3 py-1 text-violet-700 backdrop-blur-sm dark:border-violet-400/30 dark:bg-violet-900/40">M.S. Virginia Tech · 4.0 GPA</span>
         <span class="rounded-full border border-orange-200/60 bg-orange-50/55 px-3 py-1 text-orange-700 backdrop-blur-sm dark:border-orange-400/30 dark:bg-orange-900/40">NSF-funded research</span>
+        <span class="rounded-full border border-emerald-200/60 bg-emerald-50/55 px-3 py-1 text-emerald-700 backdrop-blur-sm dark:border-emerald-400/30 dark:bg-emerald-900/40">US Work Authorized</span>
       </div>
 
       <div data-animate style="--delay: 320ms" class="mt-8 flex flex-wrap items-center gap-3 text-sm">

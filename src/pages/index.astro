@@ -9,8 +9,7 @@ const posts = (await getCollection('writing', (p) => !p.data.draft)).sort(
   (a, b) => +new Date(b.data.date) - +new Date(a.data.date),
 );
 const writing = posts
-  .filter((p) => p.data.pinned)
-  .slice(0, 3)
+  .slice(0, 2)
   .map((p) => ({
     title: p.data.title,
     blurb: p.data.blurb,
@@ -505,7 +504,7 @@ const awards = [
     <!-- BLOG -->
     <section id="blog" class="scroll-mt-20 border-t border-zinc-200 py-14 sm:py-20 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12">
       <aside class="lg:sticky lg:top-24 lg:self-start">
-        <SectionHeader title="Blog" subtitle="Pinned posts." />
+        <SectionHeader title="Blog" subtitle="Latest writing." />
         <div class="mt-3 font-mono text-[11px] uppercase tracking-wider text-violet-700">
           <a href="/blog" class="hover:text-violet-900 hover:underline underline-offset-4">Full archive →</a>
         </div>
@@ -529,7 +528,7 @@ const awards = [
         ))}
         {writing.length === 0 && (
           <p class="py-5 text-sm text-zinc-500">
-            No pinned posts. <a href="/blog" class="text-orange-700 underline-offset-4 hover:underline">Browse the archive →</a>
+            No posts yet. <a href="/blog" class="text-orange-700 underline-offset-4 hover:underline">Browse the archive →</a>
           </p>
         )}
       </div>

@@ -1,0 +1,188 @@
+---
+/**
+ * Theme-aware inline SVG diagrams for the "agentic harness" blog post.
+ * Text & connectors use currentColor (inherited from the themed .post .diagram
+ * svg color), so they adapt to light/dark. Box fills use translucent brand
+ * accents (orange / sky / violet / emerald) that read on both backgrounds.
+ */
+interface Props {
+  variant: 'loop' | 'verify' | 'artifacts';
+}
+const { variant } = Astro.props;
+---
+
+{
+  variant === 'loop' && (
+    <figure class="diagram">
+      <svg
+        viewBox="0 0 680 250"
+        role="img"
+        aria-label="A loop: the builder produces an artifact, an isolated reviewer checks it at a gate. Not-done loops back to the builder to iterate; approved ships."
+      >
+        <defs>
+          <marker id="ah-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+          </marker>
+        </defs>
+
+        <rect x="500" y="8" width="120" height="30" rx="15" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5" />
+        <text x="560" y="28" text-anchor="middle" fill="currentColor" font-size="13" font-weight="600">Shipped ✓</text>
+
+        <rect x="20" y="70" width="120" height="54" rx="10" fill="rgba(249,115,22,0.13)" stroke="#f97316" stroke-width="1.5" />
+        <text x="80" y="93" text-anchor="middle" fill="currentColor" font-size="14" font-weight="600">Builder</text>
+        <text x="80" y="110" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.55">writes code</text>
+
+        <rect x="180" y="70" width="120" height="54" rx="10" fill="rgba(14,165,233,0.13)" stroke="#0ea5e9" stroke-width="1.5" />
+        <text x="240" y="93" text-anchor="middle" fill="currentColor" font-size="14" font-weight="600">Artifact</text>
+        <text x="240" y="110" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.55">plan · diff</text>
+
+        <rect x="340" y="70" width="120" height="54" rx="10" fill="rgba(124,58,237,0.13)" stroke="#7c3aed" stroke-width="1.5" />
+        <text x="400" y="93" text-anchor="middle" fill="currentColor" font-size="14" font-weight="600">Reviewer</text>
+        <text x="400" y="110" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.55">isolated context</text>
+
+        <rect x="500" y="70" width="120" height="54" rx="10" fill="rgba(16,185,129,0.13)" stroke="#10b981" stroke-width="1.5" />
+        <text x="560" y="93" text-anchor="middle" fill="currentColor" font-size="14" font-weight="600">Gate</text>
+        <text x="560" y="110" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.55">done?</text>
+
+        <g stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" fill="none">
+          <path d="M140,97 H176" marker-end="url(#ah-loop)" />
+          <path d="M300,97 H336" marker-end="url(#ah-loop)" />
+          <path d="M460,97 H496" marker-end="url(#ah-loop)" />
+          <path d="M560,68 V42" marker-end="url(#ah-loop)" />
+          <path d="M520,124 V232 H80 V128" marker-end="url(#ah-loop)" />
+        </g>
+        <text x="572" y="58" fill="currentColor" font-size="11" opacity="0.6">approved</text>
+        <text x="300" y="226" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.6">not done → loop back and iterate</text>
+      </svg>
+      <figcaption>
+        The harness as a loop, not a single pass. The builder ships an
+        <em> artifact</em>; an independent reviewer judges it at a gate. “Done” is something
+        the work has to pass — not something the builder gets to declare.
+      </figcaption>
+    </figure>
+  )
+}
+
+{
+  variant === 'verify' && (
+    <figure class="diagram">
+      <svg
+        viewBox="0 0 640 250"
+        role="img"
+        aria-label="Two separate agents. The builder holds a long, invested context and claims it is done. A reviewer with a fresh, isolated context reads only the artifact and diff, and rejects work that is not actually done."
+      >
+        <defs>
+          <marker id="ah-verify" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+          </marker>
+        </defs>
+
+        <rect x="24" y="34" width="252" height="184" rx="12" fill="rgba(249,115,22,0.10)" stroke="#f97316" stroke-width="1.5" />
+        <text x="44" y="62" fill="currentColor" font-size="14" font-weight="600">Builder agent</text>
+        <text x="44" y="80" fill="currentColor" font-size="11" opacity="0.6">argues its own work is correct</text>
+        <rect x="44" y="96" width="212" height="9" rx="4" fill="currentColor" opacity="0.12" />
+        <rect x="44" y="114" width="212" height="9" rx="4" fill="currentColor" opacity="0.12" />
+        <rect x="44" y="132" width="160" height="9" rx="4" fill="currentColor" opacity="0.12" />
+        <text x="44" y="170" fill="currentColor" font-size="11" opacity="0.6">long, invested context</text>
+
+        <line x1="320" y1="26" x2="320" y2="226" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4 5" />
+        <text x="320" y="18" text-anchor="middle" fill="currentColor" font-size="10" opacity="0.5">no shared memory</text>
+
+        <rect x="364" y="34" width="252" height="184" rx="12" fill="rgba(124,58,237,0.10)" stroke="#7c3aed" stroke-width="1.5" />
+        <text x="384" y="62" fill="currentColor" font-size="14" font-weight="600">Reviewer agent</text>
+        <text x="384" y="80" fill="currentColor" font-size="11" opacity="0.6">fresh, isolated context</text>
+        <rect x="384" y="96" width="212" height="52" rx="8" fill="rgba(14,165,233,0.14)" stroke="#0ea5e9" stroke-width="1.3" />
+        <text x="490" y="118" text-anchor="middle" fill="currentColor" font-size="12" font-weight="600">the artifact + diff</text>
+        <text x="490" y="135" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.6">read cold</text>
+        <text x="384" y="172" fill="currentColor" font-size="11" opacity="0.6">nothing to be loyal to</text>
+
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.5">
+          <path d="M276,108 H360" marker-end="url(#ah-verify)" />
+          <path d="M360,150 H280" marker-end="url(#ah-verify)" />
+        </g>
+        <text x="318" y="101" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.7">claims: done</text>
+        <text x="318" y="168" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.7">rejects: not done</text>
+      </svg>
+      <figcaption>
+        Adversarial, not self-, verification. The reviewer never saw the builder’s
+        reasoning, so it has no conclusion to defend — it catches “declared done too
+        early” far better than asking the builder to grade itself.
+      </figcaption>
+    </figure>
+  )
+}
+
+{
+  variant === 'artifacts' && (
+    <figure class="diagram">
+      <svg
+        viewBox="0 0 640 250"
+        role="img"
+        aria-label="Top: three stages each hand off a clean, typed artifact to the next. Bottom: a single long conversation transcript whose context degrades — drift and repetition — as it grows."
+      >
+        <defs>
+          <marker id="ah-art" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+          </marker>
+          <linearGradient id="grad-noise" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="currentColor" stop-opacity="0.04" />
+            <stop offset="1" stop-color="#f97316" stop-opacity="0.22" />
+          </linearGradient>
+        </defs>
+
+        <text x="20" y="24" fill="currentColor" font-size="13" font-weight="600">Artifact-driven context</text>
+        <text x="20" y="42" fill="currentColor" font-size="11" opacity="0.55">each stage hands off a clean, typed output</text>
+
+        <rect x="20" y="58" width="120" height="52" rx="10" fill="rgba(14,165,233,0.13)" stroke="#0ea5e9" stroke-width="1.5" />
+        <text x="80" y="80" text-anchor="middle" fill="currentColor" font-size="13" font-weight="600">Plan</text>
+        <text x="80" y="97" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.55">stage 1</text>
+
+        <rect x="260" y="58" width="120" height="52" rx="10" fill="rgba(249,115,22,0.13)" stroke="#f97316" stroke-width="1.5" />
+        <text x="320" y="80" text-anchor="middle" fill="currentColor" font-size="13" font-weight="600">Build</text>
+        <text x="320" y="97" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.55">stage 2</text>
+
+        <rect x="500" y="58" width="120" height="52" rx="10" fill="rgba(124,58,237,0.13)" stroke="#7c3aed" stroke-width="1.5" />
+        <text x="560" y="80" text-anchor="middle" fill="currentColor" font-size="13" font-weight="600">Review</text>
+        <text x="560" y="97" text-anchor="middle" fill="currentColor" font-size="10.5" opacity="0.55">stage 3</text>
+
+        <g fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5">
+          <path d="M140,84 H176" marker-end="url(#ah-art)" />
+          <path d="M204,84 H256" marker-end="url(#ah-art)" />
+          <path d="M380,84 H416" marker-end="url(#ah-art)" />
+          <path d="M444,84 H496" marker-end="url(#ah-art)" />
+        </g>
+
+        <g>
+          <rect x="180" y="70" width="20" height="26" rx="2" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="1.2" />
+          <line x1="184" y1="77" x2="196" y2="77" stroke="#10b981" stroke-width="1" />
+          <line x1="184" y1="82" x2="196" y2="82" stroke="#10b981" stroke-width="1" />
+          <line x1="184" y1="87" x2="192" y2="87" stroke="#10b981" stroke-width="1" />
+        </g>
+        <g>
+          <rect x="420" y="70" width="20" height="26" rx="2" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="1.2" />
+          <line x1="424" y1="77" x2="436" y2="77" stroke="#10b981" stroke-width="1" />
+          <line x1="424" y1="82" x2="436" y2="82" stroke="#10b981" stroke-width="1" />
+          <line x1="424" y1="87" x2="432" y2="87" stroke="#10b981" stroke-width="1" />
+        </g>
+
+        <line x1="20" y1="142" x2="620" y2="142" stroke="currentColor" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="3 5" />
+
+        <text x="20" y="168" fill="currentColor" font-size="13" font-weight="600">Conversation memory</text>
+        <rect x="20" y="180" width="600" height="44" rx="12" fill="url(#grad-noise)" stroke="currentColor" stroke-opacity="0.2" stroke-width="1" />
+        <text x="38" y="206" fill="currentColor" font-size="11" opacity="0.7">task</text>
+        <g stroke="currentColor" stroke-opacity="0.38" stroke-width="1.1" fill="none">
+          <path d="M360,196 q7,9 14,0 q7,-9 14,0 q7,9 14,0" />
+          <path d="M430,206 q7,9 14,0 q7,-9 14,0 q7,9 14,0" />
+          <path d="M500,200 q7,9 14,0 q7,-9 14,0 q7,9 14,0 q7,-9 14,0" />
+        </g>
+        <text x="602" y="206" text-anchor="end" fill="currentColor" font-size="11" opacity="0.7">drift · repetition</text>
+        <text x="320" y="240" text-anchor="middle" fill="currentColor" font-size="11" opacity="0.6">one long transcript — context degrades as it grows</text>
+      </svg>
+      <figcaption>
+        Structured artifacts keep each agent’s context small, clean, and relevant —
+        no matter how long the overall run gets. A single growing transcript does the
+        opposite.
+      </figcaption>
+    </figure>
+  )
+}

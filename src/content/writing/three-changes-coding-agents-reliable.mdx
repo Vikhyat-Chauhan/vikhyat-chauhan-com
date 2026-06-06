@@ -1,0 +1,78 @@
+---
+title: "Three changes that made my coding agents reliable"
+subtitle: "Adversarial verification, artifact-driven context, and loop-until-done — what building a multi-agent coding harness taught me about where the leverage actually lives."
+blurb: "I spent weeks building a multi-agent harness for software delivery. The biggest surprise: as the models get better, the leverage moves out of the model and into the system around it. Three changes moved my reliability more than any prompt tweak."
+date: 2026-06-06
+tag: Engineering
+readingTime: "5 min read"
+pinned: true
+---
+import Callout from '../../components/Callout.astro';
+import HarnessDiagram from '../../components/HarnessDiagram.astro';
+
+I've spent the last few weeks building a multi-agent harness for software
+delivery — the orchestration layer that carries a task from request to shipped
+change across planning, building, and review. I went in expecting the work to be
+about prompting. It mostly wasn't.
+
+The biggest lesson surprised me: **the model was never the bottleneck.** As the
+underlying models get better, the leverage moves *out* of the model and *into the
+system around it*. The same model, dropped into a better harness, goes from
+"impressive demo" to "actually reliable." Three changes moved my reliability more
+than any prompt tweak.
+
+<HarnessDiagram variant="loop" />
+
+## 1. Adversarial verification, not self-verification
+
+Asking a builder agent to check its own work is asking it to be skeptical of a
+conclusion it just spent its whole context arguing for. It almost always declares
+victory.
+
+The fix is a separate **reviewer agent with its own isolated context**. It never
+saw the builder's reasoning, so it has nothing to be loyal to — it reads the
+artifact and the diff cold and tries to find what's wrong. That one change caught
+the single most common failure mode in agent workflows: *declared done too early.*
+The builder is convinced; the reviewer, with fresh eyes and no sunk cost, is not.
+
+<HarnessDiagram variant="verify" />
+
+## 2. Artifact-driven context over conversation memory
+
+The naive design threads everything through one growing conversation. It works for
+short runs and falls apart on long ones — once the history gets noisy, the model
+starts drifting, re-litigating settled decisions, and losing track of the actual
+goal.
+
+Passing **structured artifacts** between stages fixes this. Each stage produces a
+typed, self-contained output — a plan, a diff, a review verdict — and the next
+stage consumes *that*, not the raw transcript. The context each agent sees stays
+small, clean, and relevant no matter how long the overall run gets.
+
+<HarnessDiagram variant="artifacts" />
+
+## 3. Loop-until-done, not one-pass generation
+
+One heroic prompt that tries to do everything in a single pass is fragile. Explicit
+stage ownership with **approval gates** beats it every time: each stage owns one
+job, hands off an artifact, and the run loops — build, review, fix, re-review —
+until the reviewer signs off.
+
+The loop is the point. "Done" is a gate the work has to *pass*, not a thing the
+builder gets to *declare*.
+
+<Callout title="The takeaway:">
+The competitive edge in agentic systems isn't a smarter agent. It's the harness —
+the orchestration, traceability, and verification around the model. Swap in next
+year's model and a good harness gets better for free; a bad one stays unreliable.
+</Callout>
+
+## So what?
+
+If you're building with agents, the instinct is to reach for a bigger model or a
+cleverer prompt when reliability slips. In my experience the higher-leverage move
+is almost always structural: isolate the reviewer, pass artifacts instead of
+transcripts, and make "done" a gate.
+
+I'm curious what failure modes others are hitting. If you're running agents in
+production — what's the one change that most improved *your* reliability?

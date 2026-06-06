@@ -33,14 +33,16 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(60% 55% at 12% -5%, rgba(186, 202, 224, 0.40), transparent 70%),
-    radial-gradient(55% 50% at 105% 15%, rgba(198, 206, 220, 0.32), transparent 70%),
-    linear-gradient(180deg, #f6f8fb 0%, #eceff4 100%);
+    radial-gradient(55% 50% at 8% -5%, rgba(251, 146, 60, 0.18), transparent 70%),
+    radial-gradient(50% 45% at 100% 8%, rgba(167, 139, 250, 0.16), transparent 70%),
+    radial-gradient(60% 55% at 50% 110%, rgba(56, 189, 248, 0.14), transparent 70%),
+    linear-gradient(180deg, #fbfaf9 0%, #f1f0f4 100%);
 }
 .dark body::before {
   background:
-    radial-gradient(60% 55% at 12% -5%, rgba(42, 54, 76, 0.55), transparent 70%),
-    radial-gradient(55% 50% at 105% 15%, rgba(28, 38, 58, 0.45), transparent 70%),
+    radial-gradient(55% 50% at 8% -5%, rgba(124, 45, 18, 0.40), transparent 70%),
+    radial-gradient(50% 45% at 100% 8%, rgba(76, 29, 149, 0.38), transparent 70%),
+    radial-gradient(60% 55% at 50% 110%, rgba(7, 89, 133, 0.32), transparent 70%),
     linear-gradient(180deg, #09090b 0%, #0c0e13 100%);
 }
 
@@ -54,7 +56,7 @@ body::before {
     0 10px 30px -10px rgb(24 24 27 / 0.18);
 }
 .glass-strong {
-  background-color: rgb(255 255 255 / 0.82);
+  background-color: rgb(255 255 255 / 0.94);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border: 1px solid rgb(255 255 255 / 0.55);
@@ -82,7 +84,7 @@ body::before {
     0 10px 30px -10px rgb(0 0 0 / 0.5);
 }
 .dark .glass-strong {
-  background-color: rgb(24 24 27 / 0.8);
+  background-color: rgb(24 24 27 / 0.94);
   border-color: rgb(255 255 255 / 0.08);
   box-shadow:
     0 1px 1px rgb(0 0 0 / 0.3),
@@ -220,6 +222,12 @@ html.dark body { color: #e4e4e7; }
 }
 .dark .post a { color: #fb923c; }
 .dark .post a:hover { color: #fdba74; }
+.dark .post .diagram {
+  background: rgb(255 255 255 / 0.03);
+  border-color: #27272a;
+}
+.dark .post .diagram svg { color: #e4e4e7; }
+.dark .post figcaption { color: #a1a1aa; }
 
 /* ---- Chat markdown bubbles ---- */
 .dark .chat-md strong,

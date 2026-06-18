@@ -35,6 +35,23 @@ const projects = [
   //   deepDive: '',                    // optional /projects/<slug>
   // },
   {
+    title: 'Hearth — Shared-Household App + NL Action Layer',
+    context: 'Personal · Full-stack · Live',
+    tagClass: 'text-emerald-700',
+    blurb:
+      'A full-stack collaborative household app — recurring chores with two-way Google Calendar sync, shared lists, and Splitwise-style expenses — plus a natural-language command bar where Claude tool-calls map straight onto the app’s zod mutation schemas (validate → Drizzle), guarded by a clarify-or-decline policy and an offline eval harness.',
+    stack: ['Next.js', 'TypeScript', 'React', 'Supabase', 'Drizzle ORM', 'Vercel'],
+    metrics: [
+      { label: 'Calendar sync', value: '2-way' },
+      { label: 'NL → mutations', value: 'zod-validated' },
+      { label: 'Deployed', value: 'Vercel' },
+    ],
+    live: 'https://hearth.tnmlabs.com',
+    liveLabel: 'Live',
+    repo: 'https://github.com/Vikhyat-Chauhan/Hearth',
+    repoLabel: 'View source',
+  },
+  {
     title: 'Specced — Clinical Notes → FHIR',
     context: 'Personal · Healthcare AI · Local-first',
     tagClass: 'text-sky-700',
@@ -47,6 +64,21 @@ const projects = [
       { label: 'De-id recall', value: '1.00' },
     ],
     repo: 'https://github.com/Vikhyat-Chauhan/specced',
+    repoLabel: 'View source',
+  },
+  {
+    title: 'Web Automation Agent',
+    context: 'Personal · Local inference',
+    tagClass: 'text-violet-700',
+    blurb:
+      'Multi-step agentic browser automation using LangGraph orchestration and Browser Use for DOM interaction, powered by a locally-quantized Qwen model on an RTX 5060 Ti — no cloud API dependency. Stateful task graphs with retry logic, conditional branching, and multi-page form-filling.',
+    stack: ['LangGraph', 'Browser Use', 'Qwen', 'Python', 'Local LLM'],
+    metrics: [
+      { label: 'Task time', value: '~60s' },
+      { label: 'First token', value: '<300ms' },
+      { label: 'Cloud APIs', value: '0' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/ats-agent',
     repoLabel: 'View source',
   },
   {
@@ -64,21 +96,6 @@ const projects = [
     repo: 'https://github.com/Vikhyat-Chauhan/ProfessionalRAG',
     repoLabel: 'View source',
     deepDive: '/projects/professional-rag',
-  },
-  {
-    title: 'Web Automation Agent',
-    context: 'Personal · Local inference',
-    tagClass: 'text-violet-700',
-    blurb:
-      'Multi-step agentic browser automation using LangGraph orchestration and Browser Use for DOM interaction, powered by a locally-quantized Qwen model on an RTX 5060 Ti — no cloud API dependency. Stateful task graphs with retry logic, conditional branching, and multi-page form-filling.',
-    stack: ['LangGraph', 'Browser Use', 'Qwen', 'Python', 'Local LLM'],
-    metrics: [
-      { label: 'Task time', value: '~60s' },
-      { label: 'First token', value: '<300ms' },
-      { label: 'Cloud APIs', value: '0' },
-    ],
-    repo: 'https://github.com/Vikhyat-Chauhan/ats-agent',
-    repoLabel: 'View source',
   },
   {
     title: 'CANavigator — Brain-Inspired Drone Navigation Framework',
@@ -491,6 +508,14 @@ const awards = [
                     class="font-medium text-orange-700 underline-offset-4 transition hover:text-orange-900 hover:underline"
                   >
                     Read the deep-dive →
+                  </a>
+                )}
+                {p.live && (
+                  <a
+                    href={p.live} target="_blank" rel="noopener"
+                    class="font-medium text-orange-700 underline-offset-4 transition hover:text-orange-900 hover:underline"
+                  >
+                    {p.liveLabel || 'Live demo'} →
                   </a>
                 )}
                 {p.repo && (

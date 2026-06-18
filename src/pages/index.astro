@@ -35,6 +35,21 @@ const projects = [
   //   deepDive: '',                    // optional /projects/<slug>
   // },
   {
+    title: 'Specced — Clinical Notes → FHIR',
+    context: 'Personal · Healthcare AI · Local-first',
+    tagClass: 'text-sky-700',
+    blurb:
+      'A QLoRA-fine-tuned Qwen2.5-Coder-7B runs a LangGraph plan → retrieve → act → evaluate loop that turns free-text clinical notes into de-identified, terminology-coded, schema-valid FHIR R4 — every output validated and field-scored against gold. Local-first by design: PHI never leaves the box.',
+    stack: ['Qwen2.5-Coder', 'QLoRA', 'LangGraph', 'FHIR R4', 'LanceDB', 'Unsloth'],
+    metrics: [
+      { label: 'Resource F1', value: '0.42 → 1.00' },
+      { label: 'Held-out pass', value: '20/20' },
+      { label: 'De-id recall', value: '1.00' },
+    ],
+    repo: 'https://github.com/Vikhyat-Chauhan/specced',
+    repoLabel: 'View source',
+  },
+  {
     title: 'Professional RAG Pipeline',
     context: 'Personal · Production',
     tagClass: 'text-orange-700',

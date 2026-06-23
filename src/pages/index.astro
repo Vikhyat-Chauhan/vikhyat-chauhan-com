@@ -67,19 +67,17 @@ const projects = [
     repoLabel: 'View source',
   },
   {
-    title: 'Web Automation Agent',
-    context: 'Personal · Local inference',
+    title: 'Hearth — Shared-Household App + Natural-Language Action Layer',
+    context: 'Personal · Live',
     tagClass: 'text-violet-700',
     blurb:
-      'Multi-step agentic browser automation using LangGraph orchestration and Browser Use for DOM interaction, powered by a locally-quantized Qwen model on an RTX 5060 Ti — no cloud API dependency. Stateful task graphs with retry logic, conditional branching, and multi-page form-filling.',
-    stack: ['LangGraph', 'Browser Use', 'Qwen', 'Python', 'Local LLM'],
+      'Full-stack collaborative household-management web app — invite-code households with admin roles, recurring chores (RFC 5545 RRULE) with bidirectional Google Calendar sync, a shared shopping list, and Splitwise-style expense splitting. A natural-language command bar turns plain English into validated mutations: Claude (Haiku 4.5 / Sonnet 4.6) emits tool calls bound to the app’s existing zod schemas, with a clarify-or-decline guardrail to prevent bad writes.',
+    stack: ['Next.js', 'TypeScript', 'Supabase', 'Drizzle', 'Claude', 'Vercel'],
     metrics: [
-      { label: 'Task time', value: '~60s' },
-      { label: 'First token', value: '<300ms' },
-      { label: 'Cloud APIs', value: '0' },
+      { label: 'Calendar sync', value: 'Bidirectional' },
+      { label: 'NL layer', value: 'Tool-calling' },
+      { label: 'Status', value: 'Live' },
     ],
-    repo: 'https://github.com/Vikhyat-Chauhan/ats-agent',
-    repoLabel: 'View source',
   },
   {
     title: 'Professional RAG Pipeline',
@@ -121,8 +119,7 @@ const experience = [
     period: '2024 — 2026',
     location: 'Blacksburg, VA',
     bullets: [
-      'Architected a LangGraph + Llama 3 multi-agent pipeline for grammar-constrained SDF XML generation, enabling procedural authoring of 100+ simulation environments — stateful task graphs with retry logic and constrained decoding for reliable structured output.',
-      'Designed and experimentally validated the Conflict Architecture (CA) framework for brain-inspired UAV navigation (NSF #2204780, PI: J.M. Paul), achieving a simultaneous 34.6% reduction in compute energy and elapsed time over baseline (p < 0.0001, n=1,000 runs, 3 real-world-mapped environments).',
+      'Designed and experimentally validated the Conflict Architecture (CA) framework for brain-inspired UAV navigation (NSF #2204780, PI: J.M. Paul), achieving a simultaneous 34.6% reduction in compute energy and elapsed time over baseline through parallel conflict resolution (p < 0.0001, n=1,000 runs across 3 real-world-mapped environments).',
     ],
   },
   {
@@ -131,9 +128,9 @@ const experience = [
     period: '2022 — 2024',
     location: 'Bengaluru, IN',
     bullets: [
-      'Led the architecture migration of a legacy C++ monolith to Kubernetes-based Java/Spring Boot microservices, cutting application runtime by 80% by designing and implementing image normalization and segmentation algorithms in C++.',
-      'Profiled and optimized a Swin Transformer model end-to-end — ONNX export, FP16 precision tuning, custom CUDA/C++ plugin authoring for unsupported ops, and layer fusion via the TensorRT builder API — for 20% throughput uplift on production hardware, enabling real-time inference.',
-      'Introduced automated quality gates and CI/CD pipelines (Jenkins, SonarQube), reducing release defects by 60% across 12 quarterly production releases.',
+      'Led the end-to-end modernization of a legacy MRI image-stitching application serving GE’s 1,000+ system global fleet, re-architecting into containerized microservices that increased throughput from single-process to 20+ parallel operations while meeting the 99% clinical accuracy threshold. Sole SWE II in the organization to receive the Impact Award.',
+      'Segregated a core C++ algorithm from a legacy monolith and designed a microservices architecture (TypeScript, Java REST, Docker/Helm, RabbitMQ) plus a CI/CD pipeline, adopted as the standard across multiple applications.',
+      'Scaled the team from 1 to 4 engineers and partnered with global platform architects and clinical specialists to deliver validation, regulatory sign-off, and onsite technician training.',
     ],
   },
   {
@@ -142,9 +139,9 @@ const experience = [
     period: '2020 — 2022',
     location: 'Delhi, IN',
     bullets: [
-      'Founded and bootstrapped (~$10K self-funded) a home-automation hardware startup, owning every layer from PCB design and firmware to cloud backend and a Flutter/Alexa mobile app; shipped to 100+ homes before COVID supply-chain disruption ended the venture.',
-      'Co-invented and patented a master-slave microcontroller communication protocol enabling single-chip control of multiple devices — cutting final-product BOM cost 80% and directly enabling first design-win customers.',
-      'Architected an AWS-backed microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT broker), scaling from 0 to 1000+ devices at 99.9% uptime, and cutting field bug reports 98% via a structured hardware-software validation workflow built as the sole engineer.'
+      'Founded and bootstrapped (~$10K self-funded) a home-automation hardware startup, owning every layer from PCB design and firmware to cloud backend and a Flutter/Alexa mobile app.',
+      'Owned the entire customer relationship as sole founder — discovery, onboarding, and support across 100+ households — converting early prospects into first design-win customers.',
+      'Architected an AWS microservice backend (EC2, Lambda, RabbitMQ, MongoDB, MQTT), scaling from 0 to 1,000+ devices at 99.9% uptime and cutting field bug reports 98% through a structured hardware-software validation workflow.'
     ],
   },
   {
